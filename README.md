@@ -117,7 +117,7 @@ On the index page, click the menu button on the top right of the page
 and select the _Login_ menu item. Then type in the username and password
 and click the _Login_ button.
 
-![Login Image](@login.gif)
+![Login Image](https://github.com/pieths/notecards/raw/master/docs/images/readme/login.gif)
 
 The login screen can also be accessed by typing `:` to open up the
 command bar and then typing `login` followed by the enter key.
@@ -132,7 +132,7 @@ There are two ways to create a new card through the web client.
    
 2. Type `:` to open up the command bar. Then type `new` followed by the enter key.
 
-    ![New Card Image](@new_card.gif)
+    ![New Card Image](https://github.com/pieths/notecards/raw/master/docs/images/readme/new_card.gif)
 
 
 ### Navigating With Keystrokes
@@ -162,7 +162,7 @@ These keystrokes are currently available to navigate on the edit page:
 * `:q` when typed in _normal_ mode in either the query or answer editors will
 	stop editing without saving any changes and go back to the index page.
     
-![Keyboard Navigation Image](@keyboard_nav.gif)
+![Keyboard Navigation Image](https://github.com/pieths/notecards/raw/master/docs/images/readme/keyboard_nav.gif)
 
 
 ### Searching For Cards
@@ -202,7 +202,7 @@ The card list on the index page can be filtered in two different ways.
     
     * The following shows the cards which have been assigned the `python` tag.
     
-        ![Search Image](@search.png)
+        ![Search Image](https://github.com/pieths/notecards/raw/master/docs/images/readme/search.png)
     
     * `/+active 0; title pca`
     
@@ -268,7 +268,7 @@ since the text is automatically formatted as it is inserted.
 More information about this mode and how to use it will be in the
 online help system (coming soon).
 
-![AsciiMath Image](@asciimath_example.gif)
+![AsciiMath Image](https://github.com/pieths/notecards/raw/master/docs/images/readme/asciimath_example.gif)
 
 
 ### Introduction To Graphs And Diagrams With CGraph
@@ -282,7 +282,7 @@ Here are a few examples:
     from left to right and `y` values increasing from bottom to top
     (just like standard math graphs).
 
-    ![CGraph Basic Image](@cgraph_basic.png)
+    ![CGraph Basic Image](https://github.com/pieths/notecards/raw/master/docs/images/readme/cgraph_basic.png)
 
 * A riemann sum. Changing the value of the width
 	variable with `Ctrl-A` and `Ctrl-X` will automatically update the graph
@@ -290,20 +290,20 @@ Here are a few examples:
     set with `:set snap=[value]` where `[value]` is the new numerical
     increment value.
 
-    ![CGraph Riemann Sum Image](@cgraph_riemann_sum.gif)
+    ![CGraph Riemann Sum Image](https://github.com/pieths/notecards/raw/master/docs/images/readme/cgraph_riemann_sum.gif)
     
 * A graph containing diagram like elements. This also demonstrates the
 	__point adjust__ mode which is an editor mode that uses vim like 
     keybindings (ie. `j`, `k`, `h`, `l`, ...) to adjust points in the cgraph markup.
     
-    ![CGraph Diagram Image](@cgraph_diagram.gif)
+    ![CGraph Diagram Image](https://github.com/pieths/notecards/raw/master/docs/images/readme/cgraph_diagram.gif)
 
 * A more advanced example demonstrating the scripting interface.
 	This is a procedurally generated visualization of a neural net.
     Updating any of the variables or adding more layers will update
     the graph in real time in the preview window.
 
-    ![CGraph Neural Net Image](@cgraph_neural_net.png)
+    ![CGraph Neural Net Image](https://github.com/pieths/notecards/raw/master/docs/images/readme/cgraph_neural_net.png)
 
 
 ### Assigning Tags To Cards
@@ -323,7 +323,7 @@ assigned to the card.
 The bottom section of the dialog shows all the tags that are defined for the
 current user. Clicking on one of these tags will assign it to the card.
 
-![Tags Image](@tags.gif)
+![Tags Image](https://github.com/pieths/notecards/raw/master/docs/images/readme/tags.gif)
 
 
 ### Adding File Attachments
@@ -391,13 +391,13 @@ was successfull. Click the `Forgot` button at the bottom of the page if the
 recall was unsuccessful. This will log the recall attempt and adjust the
 spacing bin and next review date accordingly.
 
-![Review Card Image](@review_card.gif)
+![Review Card Image](https://github.com/pieths/notecards/raw/master/docs/images/readme/review_card.gif)
 
 
 ### Importing And Exporting Cards
 
 The file format used for importing and exporting is a gzipped tar archive
-with a \*.car extension (__C__ard __AR__chive). Each entry in the archive
+with a \*.car extension (Card ARchive). Each entry in the archive
 corresponds to the json representation of a card.
 
 __Importing/Exporting Cards With The Web Client__
