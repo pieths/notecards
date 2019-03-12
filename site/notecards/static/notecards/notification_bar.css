@@ -1,0 +1,65 @@
+.notification-bar-container
+{
+    display: none;
+    position: fixed;
+    bottom: 0.5em;
+    right: 2em;
+    background-color: rgba(0,0,0,0);
+    width: 100%;
+}
+
+.notification-bar-message-container
+{
+    position: absolute;
+    padding: 0.5em;
+    border: 1px solid #ccc;
+    border-radius: 0.3em;
+    background-color: white;
+    right: 0;
+    bottom: 0;
+    max-width: 50%;
+    display: flex;
+    flex-direction: row;
+}
+
+.notification-bar-message
+{
+    color: #444;
+    padding: 0.3em;
+}
+
+.notification-bar-message-count
+{
+    margin-left: 0.5em;
+    margin-right: 0.2em;
+    padding: 0.3em 0;
+    color: #ccc;
+}
+
+.notification-bar-message-icon-success
+{
+    display: block;
+    color: white;
+    background-color: green;
+    margin-left: 0.3em;
+    padding: 0.3em;
+    border-radius: 0.3em;
+    max-height: 1em;
+}
+
+.notification-bar-message-icon-error
+{
+    display: block;
+    color: white;
+    background-color: red;
+    margin-left: 0.3em;
+    padding: 0.3em;
+    border-radius: 0.3em;
+    max-height: 1em;
+}
+
+.notification-bar-message-icon-none
+{
+    display: none;
+}
+

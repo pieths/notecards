@@ -1,0 +1,74 @@
+#cgraphMenu
+{
+    position: fixed;
+    width: 90%;
+    bottom: 1em;
+    background-color: #fdfdfd;
+    z-index: 10000;
+    margin: 0 5%;
+}
+
+#cgraphMenuInsertButtons
+{
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr ;
+}
+
+#cgraphMenuControls
+{
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1.2fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+}
+
+#cgraphMenuControls #snapInputContainer
+{
+    grid-column-start: 2;
+    grid-column-end: 10;
+}
+
+#cgraphMenuControls #strokeWidthInputContainer
+{
+    grid-column-start: 2;
+    grid-column-end: 8;
+}
+
+#cgraphMenuControls #fontSizeInputContainer
+{
+    grid-column-start: 2;
+    grid-column-end: 8;
+}
+
+#cgraphMenu #cgraph_menu_f,
+#cgraphMenu #cgraph_menu_sc
+{
+    justify-self: center;
+    align-self: center;
+}
+
+/*
+ * Fix for mini slider overlapping the text widget.
+ * https://github.com/jquery/jquery-mobile/issues/7821
+ */
+#cgraphMenu .ui-slider-track.ui-mini
+{
+  margin: 0 15px 0 68px;
+}
+#cgraphMenu div.ui-slider-switch.ui-mini
+{
+  margin: .5em 0; 
+}
+
+#cgraphMenu div.ui-btn
+{
+    margin: 0px;
+    padding-top: 0.5em;
+    padding-bottom: 0.5em;
+}
+
+#cgraphMenu div.ui-block-b
+{
+    padding-right: 0.5em;
+}
+

@@ -1,0 +1,393 @@
+.ui-bar-a,
+.ui-title,
+.ui-body-a,
+.ui-input-text input,
+.card-list
+{
+    text-shadow: none;
+}
+
+.ui-bar-a
+{
+    background-color: #bed9e977;
+    color: #5e6b73; /* bed9e9 with a HSV V-value of 45 */
+}
+
+.ui-bar-grey
+{
+    background-color: #f6f6f6;
+}
+
+.title-container
+{
+    background-color: #f0f0f0;
+    padding-left: 2em;
+    padding-right: 2em;
+    color: #333;
+}
+
+.card-list-title
+{
+    margin: 0px;
+    font-weight: bold;
+}
+
+.card-list-uuid
+{
+    margin: 0px;
+    font-size: 0.75em;
+    color: #bbb;
+}
+
+.query-textarea,
+.answer-textarea
+{
+    height: 5em;
+}
+
+.edit-textarea-container
+{
+    padding: 0;
+}
+
+.hidden-element
+{
+    display: none;
+}
+
+@media all and (max-width: 60em)
+{
+    .grid-break-point .ui-block-a,
+    .grid-break-point .ui-block-b
+    {
+        width: 100%;
+        float: none;
+    }
+
+    .edit-card-preview-container
+    {
+        margin-top: 1em;
+    }
+}
+
+/* simulate if/else with media query */
+@media not all and (max-width: 60em)
+{
+    .ui-block-b
+    {
+        padding-left: 7px;
+    }
+
+    .edit-card-preview-container
+    {
+        margin-top: 0;
+    }
+}
+
+.query-text img,
+.answer-text img
+{
+    max-width: 80%;
+}
+
+.query-text hr,
+.answer-text hr
+{
+    border: 0.5px solid #ddd;
+}
+
+.query-text dt,
+.answer-text dt
+{
+    font-weight: bold;
+}
+
+.query-snippet
+{
+    font-size: 80%;
+    line-height: 1.5em;
+}
+
+.query-snippet img
+{
+    max-width: 27em;
+}
+
+.query-snippet .cgraph-placeholder
+{
+    border: 1px dashed #00000077;
+    padding: 0.2em;
+    width: 7em;
+    text-align: center;
+}
+
+.card-list thead,
+.retrieval-attempts-list thead
+{
+    border-top: 0px solid #555;
+    border-bottom: 1px solid #555;
+}
+.card-list thead th,
+.card-list tbody tr:last-child,
+.retrieval-attempts-list thead th
+{
+    border-bottom: 1px solid #d6d6d6;
+    border-bottom: 1px solid rgba(0,0,0,.1);
+}
+.card-list tbody th,
+.card-list tbody td,
+.retrieval-attempts-list tbody th,
+.retrieval-attempts-list tbody td
+{
+    border-bottom: 1px solid #e6e6e6; /* non-RGBA fallback  */
+    border-bottom: 1px solid rgba(0,0,0,.05);
+}
+.card-list tbody tr:last-child th,
+.card-list tbody tr:last-child td,
+.retrieval-attempts-list tbody tr:last-child th,
+.retrieval-attempts-list tbody tr:last-child td
+{
+    border-bottom: 0;
+}
+.card-list tbody tr:nth-child(odd) td,
+.card-list tbody tr:nth-child(odd) th
+{
+    background-color: #eeeeee; /* non-RGBA fallback  */
+    background-color: rgba(0,0,0,.04);
+}
+.card-list tbody tr td .tags
+{
+    color: #bbb;
+    font-size: 80%;
+}
+
+.card-list tbody tr td p.preview-container
+{
+    margin:0px;
+}
+
+.card-list .inactive-retrieval-date
+{
+    color: #aaa;
+}
+
+#menu_panel .ui-collapsible.ui-li-static
+{
+    padding: 0;
+    border: none !important;
+}
+
+#menu_panel .ui-listview>li h3
+{
+    margin: 0px;
+}
+
+/* Indentation for the advance review date list */
+#menu_panel .ui-listview>li .ui-listview>li .ui-btn
+{
+    padding-left: 2em;
+}
+
+.cgraph-root
+{
+    display: block;
+    margin-top: 1em;
+    margin-bottom: 1em;
+    margin-left: 1em;
+}
+
+.page-number-descriptor
+{
+    cursor: default!important;
+    pointer-events: none;
+}
+
+.query-text code,
+.answer-text code
+{
+    background: #f5f5f5;
+}
+
+.query-text pre code,
+.answer-text pre code,
+.query-snippet pre code
+{
+    background: #fafafa;
+    border: 1px solid #ddd;
+    border-left: 3px solid #f36d33;
+    color: #666;
+    page-break-inside: avoid;
+    font-family: monospace;
+    font-size: 13px;
+    line-height: 1.5;
+    margin-bottom: 0em;
+    max-width: 100%;
+    overflow: auto;
+    padding: 1em 1.5em;
+    display: block;
+    word-wrap: break-word;
+}
+
+.query-text pre code.language-console,
+.answer-text pre code.language-console,
+.query-snippet pre code.language-console
+{
+    color: #666;
+    border-left: 3px solid #ddd;
+    page-break-inside: avoid;
+    font-family: monospace;
+    font-size: 13px;
+    line-height: 1.5;
+    margin-bottom: 0em;
+    max-width: 100%;
+    overflow: auto;
+    padding: 1em 1.5em;
+    display: block;
+    word-wrap: break-word;
+}
+
+.code-copy-button
+{
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    color: #bbb;
+    border: 1px solid #ddd;
+    padding: 0.35em;
+    cursor: pointer;
+}
+
+#file_management_panel .ui-panel-inner
+{
+    padding: 0;
+}
+
+.file-list-table
+{
+    table-layout: fixed;
+    width: 100%;
+}
+
+.file-name-field
+{
+    font-size: 0.8em;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    word-break:break-all;
+    white-space:normal;
+}
+
+.file-thumbnail-cell
+{
+    text-align:center;
+}
+
+.CodeMirror
+{
+    height: 35em;
+}
+
+#query_preview,
+#query_preview_buffer,
+#answer_preview,
+#answer_preview_buffer
+{
+    max-height: 27.8em;
+    overflow-y: auto;
+}
+
+.color-selection-button
+{
+    border: 1px solid #ddd;
+    cursor: pointer;
+    width: 2em;
+    height: 2em;
+    font-size: 1em;
+    text-align:center;
+    vertical-align: middle;
+}
+
+.cm-s-default .cm-asciimath,
+.cm-s-default .cm-tex-inline,
+.cm-s-default .cm-tex-block
+{
+    background-color: #0000ff0c;
+}
+
+.cm-s-default .cm-cgraph-header,
+.cm-s-default .cm-cgraph-footer
+{
+    font-weight: bold;
+}
+
+.card-list-highlight
+{
+    border-top: 2px solid #777;
+    border-bottom: 2px solid #777;
+    /*
+    background-color: #ff000022;
+    */
+    background-color: #bed9e955;
+}
+
+.card-list tbody tr.card-list-highlight td p.tags
+{
+    color: #777;
+}
+
+.md-table thead tr th,
+.md-table tbody tr td
+{
+    border: 1px solid #e6e6e6; /* non-RGBA fallback  */
+    border: 1px solid rgba(0,0,0,.1);
+}
+.md-table tbody tr:nth-child(even) td,
+.md-table tbody tr:nth-child(even) th
+{
+    background-color: #eeeeee; /* non-RGBA fallback  */
+    background-color: rgba(0,0,0,.04);
+}
+
+.cgraph-mtext
+{
+    white-space: pre-line;
+}
+
+.edit-card-tags-container
+{
+    width: auto;
+}
+
+#login_overlay_form
+{
+    padding: 0.5em;
+}
+
+#login_error_message_container
+{
+    color: red;
+    border: 1px solid red;
+    border-radius: 0.3em 0.3em;
+    padding: 0.5em;
+    margin-bottom: 1.5em;
+}
+
+.cgraph-uniform-scale-notification
+{
+    border: 1px solid red;
+    padding: 0.25em;
+}
+
+.point-adjust-mode .CodeMirror-cursor,
+.point-adjust-mode .CodeMirror-selected
+{
+    background-color: #ff616377; /* #ff6163 #ffbf79 */
+}
+
+.point-adjust-increment-dialog
+{
+    font-size: 1.1em;
+    color: #333;
+    border-bottom: 3px solid #777;
+}
+

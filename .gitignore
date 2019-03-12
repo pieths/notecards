@@ -1,0 +1,14 @@
+python_env/
+site/media
+site/db.sqlite3
+
+site/main/*.pyc
+site/notecards/*.pyc
+site/notecards/migrations/*.pyc
+
+site/main/__pycache__/
+site/notecards/__pycache__/
+site/notecards/api/__pycache__/
+site/notecards/migrations/__pycache__/
+site/notecards/templatetags/__pycache__/
+site/notecards/tests/__pycache__/

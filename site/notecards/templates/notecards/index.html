@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html>
+<head>
+    {% load static %}
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="{% static 'notecards/jqm/jquery.mobile-1.4.5.min.css' %}" />
+    <script src="{% static 'notecards/jquery-2.2.4.min.js' %}"></script>
+    <script>
+    $(document).bind("mobileinit", function () {
+        $.mobile.ajaxEnabled = false;
+    });
+    </script>
+    <script src="{% static 'notecards/jqm/jquery.mobile-1.4.5.min.js' %}"></script>
+
+    <script type="text/x-mathjax-config">
+        // See https://github.com/mathjax/MathJax/blob/master/config/default.js
+        MathJax.Hub.Config({
+            jax: ["input/TeX", "input/AsciiMath", "output/SVG"],
+            extensions: ["tex2jax.js", "asciimath2jax.js"],
+            asciimath2jax: { delimiters: [['$[',']$']] },
+            tex2jax: {
+                inlineMath: [['$$', '$$']],
+                displayMath: [['$$$', '$$$']],
+                processEscapes: false
+            },
+            displayAlign: "left",
+            displayIndent: "2em",
+            skipStartupTypeset: true,
+            messageStyle: "none"
+            });
+    </script>
+    <script src="{% static 'notecards/mathjax/2.7.1/MathJax.js' %}"></script>
+
+    <!-- import markdown files -->
+    <script src="{% static 'notecards/markdown/markdown-it.min.js' %}"></script>
+    <script src="{% static 'notecards/markdown/markdown-it-deflist.min.js' %}"></script>
+    <script src="{% static 'notecards/markdown/markdown-it-container.js' %}"></script>
+    <script src="{% static 'notecards/markdown/markdown-it-math-delimiters.js' %}"></script>
+    <script src="{% static 'notecards/markdown_utils.js' %}"></script>
+
+    <script src="{% static 'notecards/js.cookie.js' %}"></script>
+
+    <script src="{% static 'notecards/event_listeners.js' %}"></script>
+    <script src="{% static 'notecards/card_api.js' %}"></script>
+    <script src="{% static 'notecards/card_list.js' %}"></script>
+    <script src="{% static 'notecards/index_key_handler.js' %}"></script>
+    <script src="{% static 'notecards/index_command_bar.js' %}"></script>
+    <script src="{% static 'notecards/overlay.js' %}"></script>
+    <script src="{% static 'notecards/login_overlay.js' %}"></script>
+
+    <link rel="stylesheet" type="text/css" href="{% static 'notecards/style.css' %}" />
+</head>
+
+<script>
+var loginOverlay;
+
+$(document).ready(function(){
+    CardApi.init();
+
+    cardList.init(document.getElementById('cards_table_body'));
+    cardList.addEventListener('updated', function(evt) {
+        updateHeaderElements();
+        updatePageSelectPanel();
+    });
+    cardList.update({
+        'reviewStatus': '{{ filter_params.review_status }}',
+        'orderBy': '{{ filter_params.order_by }}',
+        'active': '{{ filter_params.active }}',
+        'tagsFilter': '{{ filter_params.tags_filter }}',
+        'titleFilter': '{{ filter_params.title_filter }}',
+        'cardsPerPage': '{{ filter_params.cards_per_page }}',
+        'page': '{{ filter_params.page }}',
+        'format': 'index'
+    });
+
+    var userAgent = navigator.userAgent.toLowerCase();
+    var onDesktop = ((userAgent.indexOf("mobile") === -1) &&
+                     (userAgent.indexOf("ipad") === -1) &&
+                     (userAgent.indexOf("android") === -1));
+
+    if (onDesktop)
+    {
+        indexCommandBar.init(20001, {
+            createNewCard: createNewCard,
+            showLoginOverlay: showLoginOverlay,
+            logout: logout
+        });
+        indexCommandBar.addEventListener('card-filter-update', evt => {
+            if (evt.commit) CardApi.loadIndexPage(evt.filter);
+            else cardList.update(evt.filter);
+        });
+
+        indexKeyHandler.init(cardList, {
+            next: () => {
+                if (cardList.pageInfo.hasNext)
+                    submitFilterForm(cardList.pageInfo.nextPageNumber);
+            },
+            previous: () => {
+                if (cardList.pageInfo.hasPrevious)
+                    submitFilterForm(cardList.pageInfo.previousPageNumber);
+            },
+        }, indexCommandBar);
+    }
+
+    hideCGraphElements();
+
+    /*
+     * Save location so other pages can jump
+     * back to the same filtered list.
+     */
+    var storage = window.sessionStorage;
+    storage.setItem('index_url', window.location.href);
+
+    document.getElementById('filter_form').addEventListener('submit', evt=>{
+        evt.stopPropagation();
+        evt.preventDefault();
+        submitFilterForm(1);
+    });
+
+    var archiveFileInput = document.getElementById("archive_file_input");
+    archiveFileInput.addEventListener('change', evt=>{
+        var formData = new FormData(archiveFileInput.form);
+        CardApi.importCardArchive(formData, ()=>window.location.reload(true));
+    });
+
+    loginOverlay = new LoginOverlay(20002);
+    loginOverlay.addEventListener('logged_in', ()=>window.location.reload(true));
+});
+
+function updateHeaderElements()
+{
+    var title = "Cards ";
+    if (cardList.pageInfo.numPages > 1) title += `(${cardList.pageInfo.startIndex}-${cardList.pageInfo.endIndex} of ${cardList.pageInfo.totalNumCards})`
+    else title += `(${cardList.pageInfo.numCards})`;
+    $('#page_header_title').text(title);
+
+    if (cardList.pageInfo.hasPrevious)
+    {
+        $('#previous_page_button').show().off('click')
+        .on('click', () => submitFilterForm(cardList.pageInfo.previousPageNumber));
+    }
+    else $('#previous_page_button').hide();
+
+    if (cardList.pageInfo.hasNext)
+    {
+        $('#next_page_button').show().off('click')
+        .on('click', () => submitFilterForm(cardList.pageInfo.nextPageNumber));
+    }
+    else $('#next_page_button').hide();
+
+    $('#page_select_panel_reveal_button')
+        .text(`Page ${cardList.pageInfo.currentPage} of ${cardList.pageInfo.numPages}`);
+}
+
+function updatePageSelectPanel()
+{
+    if (cardList.pageInfo.numPages > 7)
+    {
+        $('#specify_page_button').show();
+        $('#last_page_button').show();
+    }
+    else
+    {
+        for (var i=1; i <= cardList.pageInfo.numPages; i++) $(`#page_button_${i}`).show();
+        for (var i=cardList.pageInfo.numPages + 1; i <= 7; i++) $(`#page_button_${i}`).hide();
+
+        $('#specify_page_button').hide();
+        $('#last_page_button').hide();
+    }
+}
+
+function hideCGraphElements()
+{
+    var elements = document.querySelectorAll("div[data-content-type^='cgraph_']");
+
+    for (var i=0; i < elements.length; i++)
+    {
+        elements[i].style.display = "none";
+    }
+}
+
+function toggleFilterFormViewState()
+{
+    if ($("#filter_form").is(":hidden"))
+    {
+        $(window).scrollTop(0);
+        indexKeyHandler.disable();
+    }
+    else indexKeyHandler.enable();
+
+
+    $("#filter_form").toggle();
+    $("#page_header").trigger("updatelayout");
+}
+
+function advanceReviewDate(numDays)
+{
+    var confirmMessage = "Are you sure you want to advance the card retrieval dates by ";
+    confirmMessage += numDays.toString() + " days?";
+    confirmMessage += " NOTE: All active filter options will be applied before adjustment.";
+
+    if (confirm(confirmMessage))
+    {
+        var filter = newFilterObjectFromFormValues()
+        filter.page = 1;
+        filter.cardsPerPage = 0;
+
+        CardApi.advanceReviewDate(numDays, filter, ()=>{
+            // Refresh the list according to the current filter
+            filter = newFilterObjectFromFormValues();
+            cardList.update(filter);
+        });
+    }
+
+    $("#advance_review_date_collapsible").collapsible("collapse"); 
+    return true;
+}
+
+function getUserDefinedPage()
+{
+    var input = window.prompt(`Enter Page Number: [1-${cardList.pageInfo.numPages}]`);
+    if (input !== null)
+    {
+        var value = parseInt(input, 10);
+        if (!Number.isNaN(value)) submitFilterForm(value);
+    }
+}
+
+function submitFilterForm(page)
+{
+    if (page === -1) page = cardList.pageInfo.numPages;
+    $('#page').val(page)
+    $('#filter_form').submit();
+}
+
+function createNewCard()
+{
+    CardApi.newCard((card)=>location.assign(card.getLink('edit-page')));
+}
+
+function newFilterObjectFromFormValues()
+{
+    return {
+        'reviewStatus': document.getElementById('review_status_list').value,
+        'orderBy': document.getElementById('order_by_list').value,
+        'active': document.getElementById('active_list').value,
+        'tagsFilter': document.getElementById('tags_filter').value,
+        'titleFilter': document.getElementById('title_filter').value,
+        'cardsPerPage': document.getElementById('cards_per_page').value,
+        'page': document.getElementById('page').value,
+        'format': 'index'
+    };
+}
+
+function exportCards()
+{
+    var filter = newFilterObjectFromFormValues()
+    filter.page = 1;
+    filter.cardsPerPage = 0;
+    filter.format = 'archive';
+
+    CardApi.getCards(filter);
+}
+
+function showLoginOverlay()
+{
+    loginOverlay.show();
+}
+
+function logout()
+{
+    CardApi.logout(()=>window.location.assign('/cards'));
+}
+</script>
+
+<body>
+
+
+{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+
+
+<div id="menu_panel" data-role="panel" data-display="overlay" data-position="right">
+    <ul data-role="listview">
+        <li data-role="list-divider">Actions</li>
+
+        {% if user.is_authenticated %}
+            <li><a href="#" data-ajax="false" onclick="logout()">Logout ({{ user.username }})</a></li>
+        {% else %}
+            <li><a href="#" data-ajax="false" onclick="showLoginOverlay()">Login</a></li>
+        {% endif %}
+
+        <li><a href="#" data-ajax="false" onclick="createNewCard()">New Card</a></li>
+
+        <li data-role="collapsible" data-inset="false" data-iconpos="right">
+            <h3>Import Cards</h3>
+
+            <form
+                id="import_archive_form"
+                action="javascript:void(0);"
+                method="post"
+                data-ajax='false'
+                enctype="multipart/form-data">
+
+                {% csrf_token %}
+
+                <input
+                    type="file"
+                    id="archive_file_input"
+                    name="archive_file"
+                    accept=".car">
+            </form>
+        </li>
+
+        <li><a href="#" data-ajax="false" onclick="exportCards()">Export Cards</a></li>
+        <li
+            id="advance_review_date_collapsible"
+            data-role="collapsible"
+            data-inset="false"
+            data-iconpos="right">
+
+            <h3>Advance Review Date</h3>
+
+            <ul data-role="listview">
+                <li><a href="#" data-ajax="false" onclick="advanceReviewDate(1)">1 Day</a></li>
+                <li><a href="#" data-ajax="false" onclick="advanceReviewDate(2)">2 Days</a></li>
+                <li><a href="#" data-ajax="false" onclick="advanceReviewDate(3)">3 Days</a></li>
+                <li><a href="#" data-ajax="false" onclick="advanceReviewDate(4)">4 Days</a></li>
+                <li><a href="#" data-ajax="false" onclick="advanceReviewDate(5)">5 Days</a></li>
+            </ul>
+        </li>
+    </ul>
+</div>
+
+
+<div id="page_select_panel" data-role="panel" data-display="overlay" data-position="left">
+    <ul data-role="listview">
+        <li data-role="list-divider">Select Page...</li>
+
+        {% for i in "x"|rjust:"7" %}
+            <li>
+                <a href="#"
+                   id="page_button_{{ forloop.counter }}"
+                   data-ajax="false" onclick="submitFilterForm({{ forloop.counter }})">Page {{ forloop.counter }}</a>
+            </li>
+        {% endfor %}
+
+        <li><a href="#" id="specify_page_button" data-ajax="false" onclick="getUserDefinedPage()">...</a></li>
+        <li><a href="#" id="last_page_button" data-ajax="false" onclick="submitFilterForm(-1)">Last Page</a></li>
+    </ul>
+</div>
+
+
+<div id="page_header" data-role="header" data-position="fixed" class="ui-overlay-shadow">
+    <h3 id="page_header_title">Cards</h3>
+
+    <div data-type="horizontal" data-role="controlgroup" class="ui-btn-left">  
+        <a href="#" id="previous_page_button" data-role="button" data-icon="arrow-l" data-iconpos="notext">Prev</a>
+
+        <a href="#page_select_panel" id="page_select_panel_reveal_button" data-role="button" data-theme="a" data-inline="true">Page</a>
+
+        <a href="#" id="next_page_button" data-role="button" data-icon="arrow-r" data-iconpos="notext">Next</a>
+    </div>
+
+    <div data-type="horizontal" data-role="controlgroup" class="ui-btn-right">  
+        <button type="button" onclick="toggleFilterFormViewState()">Filters</button>
+        <a href="#menu_panel" data-role="button" data-icon="action" data-iconpos="notext" data-theme="a" data-inline="true">My button</a>
+    </div>
+</div>
+
+<form id="filter_form" class="hidden-element ui-body ui-shadow" data-ajax="false">
+
+    <div class="ui-field-contain">
+        <label for="review_status_list">Review Status</label>
+        <select name="review_status" id="review_status_list" data-mini="true">
+            <option value="0"
+                {% if filter_params.review_status == 0 %}
+                    selected="selected"
+                {% endif %}
+                >Requires Review</option>
+            <option value="1"
+                {% if filter_params.review_status == 1 %}
+                    selected="selected"
+                {% endif %}
+                >Any</option>
+        </select>
+    </div>
+
+    <div class="ui-field-contain">
+        <label for="order_by_list">Order By</label>
+        <select name="order_by" id="order_by_list" data-mini="true">
+            <option value="0"
+                {% if filter_params.order_by == 0 %}
+                    selected="selected"
+                {% endif %}
+                >Review Date</option>
+            <option value="1"
+                {% if filter_params.order_by == 1 %}
+                    selected="selected"
+                {% endif %}
+                >Creation Date</option>
+        </select>
+    </div>
+
+    <div class="ui-field-contain">
+        <label for="active_list">Active</label>
+        <select name="active" id="active_list" data-mini="true">
+            <option value="1"
+                {% if filter_params.active == 1 %}
+                    selected="selected"
+                {% endif %}
+                >True</option>
+            <option value="0"
+                {% if filter_params.active == 0 %}
+                    selected="selected"
+                {% endif %}
+                >False</option>
+            <option value="2"
+                {% if filter_params.active == 2 %}
+                    selected="selected"
+                {% endif %}
+                >Any</option>
+        </select>
+    </div>
+
+    <div class="ui-field-contain">
+        <label for="tags_filter">Tags</label>
+        <input type="text" name="tags_filter" id="tags_filter" placeholder="Tags" value="{{ filter_params.tags_filter }}" />
+    </div>
+
+    <div class="ui-field-contain">
+        <label for="title_filter">Title Contains</label>
+        <input type="text" name="title_filter" id="title_filter" placeholder="Title Contents" value="{{ filter_params.title_filter }}" />
+    </div>
+
+    <div class="ui-field-contain">
+        <input data-inline="true" type="button" data-mini="true" value="Reset" onclick="location.assign('/cards')" />
+        <input data-inline="true" type="submit" data-mini="true" value="Update Filter" />
+    </div>
+
+    <input id="page" name="page" type="hidden" value="{{ filter_params.page }}">
+    <input id="cards_per_page" name="cards_per_page" type="hidden" value="{{ filter_params.cards_per_page }}">
+</form>
+
+
+<table data-role="table" id="cards_table" data-mode="reflow" class="card-list ui-responsive ui-overlay-shadow">
+    <thead>
+        <tr>
+            <th>Query</th>
+            <th>Bin</th>
+            <th>Next Review Date</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody id="cards_table_body">
+    </tbody>
+</table>
+
+</body>
+</html>
+

@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+<head>
+    {% load static %}
+    {% load notecards_extras %}
+
+    <!--
+        Provide global access to the django static url
+        so that JavaScript files can access images, etc...
+      -->
+    <script type="text/javascript">
+        const DJANGO_STATIC_URL = '{% static 'notecards' %}';
+    </script>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="{% static 'notecards/jqm/jquery.mobile-1.4.5.min.css' %}" />
+    <script src="{% static 'notecards/jquery-2.2.4.min.js' %}"></script>
+    <script>
+    $(document).bind("mobileinit", function () {
+        $.mobile.ajaxEnabled = false;
+    });
+    </script>
+    <script src="{% static 'notecards/jqm/jquery.mobile-1.4.5.min.js' %}"></script>
+
+    <script type="text/x-mathjax-config">
+        // See https://github.com/mathjax/MathJax/blob/master/config/default.js
+        MathJax.Hub.Config({
+            jax: ["input/TeX", "input/AsciiMath", "output/SVG"],
+            extensions: ["tex2jax.js", "asciimath2jax.js"],
+            asciimath2jax: { delimiters: [['$[',']$']] },
+            tex2jax: {
+                inlineMath: [['$$', '$$']],
+                displayMath: [['$$$', '$$$']],
+                processEscapes: false
+            },
+            displayAlign: "left",
+            displayIndent: "2em",
+            skipStartupTypeset: true,
+            messageStyle: "none"
+            });
+    </script>
+    <script src="{% static 'notecards/mathjax/2.7.1/MathJax.js' %}"></script>
+
+    <!-- import markdown files -->
+    <script src="{% static 'notecards/markdown/markdown-it.min.js' %}"></script>
+    <script src="{% static 'notecards/markdown/markdown-it-deflist.min.js' %}"></script>
+    <script src="{% static 'notecards/markdown/markdown-it-container.js' %}"></script>
+    <script src="{% static 'notecards/markdown/markdown-it-math-delimiters.js' %}"></script>
+    <script src="{% static 'notecards/markdown_utils.js' %}"></script>
+
+    <script src="{% static 'notecards/clipboard.js' %}"></script>
+    <script src="{% static 'notecards/js.cookie.js' %}"></script>
+    <script src="{% static 'notecards/card_api.js' %}"></script>
+
+    <!-- CGraph support -->
+    <script type="text/javascript" src="{% static 'notecards/cgraph/smooth-0.1.7.js' %}"></script>
+    <script type="text/javascript" src="{% static 'notecards/cgraph/cgraph.js' %}"></script>
+
+    <link rel="stylesheet" type="text/css" href="{% static 'notecards/style.css' %}" />
+</head>
+
+<script>
+$(document).ready(function(){
+    CGraph.init(DJANGO_STATIC_URL + "/cgraph/", initPage);
+});
+
+function initPage()
+{
+    CardApi.init();
+
+    urlMap = JSON.parse('{{ url_map_json|escapejs }}');
+
+    md = MarkdownUtils.init();
+    document.querySelectorAll(".query-text, .answer-text").forEach(element => {
+        var html = md.render(element.textContent, {urlMap: urlMap});
+        element.innerHTML = html;
+    });
+
+    CGraph.setUrlMap(urlMap);
+    CGraph.convertAllElements({shrinkable: true});
+
+    /*
+     * Fix an issue where svgElement.getScreenCTM() called
+     * in the cgraph mtext command was returning default values (or null)
+     * instead of the correct value because the parent element was in a
+     * display:none block style (due to being in a jquery mobile collapsible).
+     * The temporary work around is to initially show the elements while
+     * cgraph does its processing and then hide it as soon as the processing
+     * is completed.
+     */
+    $("#answer_collapsible").collapsible("collapse");
+
+    addCopyToCodeBlocks();
+
+    /*
+     * Put in request to start typesetting
+     * the mathematics on the page.
+     */
+    MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
+}
+
+function returnToIndex()
+{
+    var storage = window.sessionStorage;
+    var url = storage.getItem('index_url');
+    location.assign((url == null) ? '/cards/' : url);
+}
+
+function postRetrievalAttempt(success)
+{
+    CardApi.newRetrievalAttempt("{{ card.uuid }}", success, returnToIndex);
+}
+
+function addCopyToCodeBlocks()
+{
+    var codeBlocks = document.querySelectorAll("pre code");
+    if (codeBlocks.length > 0)
+    {
+        var textClipboard = new TextClipboard();
+
+        codeBlocks.forEach(codeBlock => {
+            var copyButton = document.createElement("div");
+            copyButton.setAttribute('class', 'code-copy-button');
+
+            var textNode = document.createTextNode("Copy");
+            copyButton.appendChild(textNode);
+
+            copyButton.addEventListener('click', function(e) {
+                textClipboard.copy(codeBlock.textContent);
+                e.preventDefault();
+                e.stopPropagation();
+            });
+
+            codeBlock.parentElement.style.position = "relative";
+            codeBlock.parentElement.appendChild(copyButton);
+        });
+    }
+}
+</script>
+
+<body>
+
+
+{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+
+
+<div id="page_header" data-role="header" data-position="fixed" class="ui-overlay-shadow">
+    <h3>Review Card</h3>
+    <div data-type="horizontal" data-role="controlgroup" class="ui-btn-right">  
+        <button type="button" data-ajax='false' onclick="location.assign('{{ card.links|rest_link:"edit-page" }}')">Edit</button>
+        <button type="button" data-ajax='false' onclick="returnToIndex()">Cancel</button>
+    </div>
+</div>
+
+{% if card.title %}
+    <h4 class="ui-bar ui-bar-a title-container">{{ card.title }}</h4>
+{% endif %}
+
+<div id="query_container" class="ui-body">
+    <div class="ui-body ui-body-a ui-corner-all">
+        <div class="query-text">{{ card.query }}</div>
+    </div>
+</div>
+
+<div class="ui-body">
+    <div id="answer_collapsible" data-role="collapsible" data-collapsed="false" >
+        <h4>Answer</h4>
+        <div>
+            <div class="answer-text">{{ card.answer }}</div>
+        </div>
+    </div>
+</div>
+
+<div class="ui-body">
+    <button
+        type="button"
+        data-ajax='false'
+        data-inline="true"
+        data-icon="delete"
+        onclick="postRetrievalAttempt(false)">Forgot</button>
+
+    <button
+        type="button"
+        data-ajax='false'
+        data-inline="true"
+        data-icon="check"
+        onclick="postRetrievalAttempt(true)">Retrieved</button>
+</div>
+
+</body>
+</html>
+

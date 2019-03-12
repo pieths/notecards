@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html>
+<head>
+    {% load static %}
+
+    <!--
+        Provide global access to the django static url
+        so that JavaScript files can access images, etc...
+      -->
+    <script type="text/javascript">
+        const DJANGO_STATIC_URL = '{% static 'notecards' %}';
+    </script>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- import jquery files -->
+    <link rel="stylesheet" type="text/css" href="{% static 'notecards/jqm/jquery.mobile-1.4.5.min.css' %}" />
+    <script src="{% static 'notecards/jquery-2.2.4.min.js' %}"></script>
+    <script>
+    $(document).bind("mobileinit", function () {
+        $.mobile.hideUrlBar = false;
+        $.mobile.ajaxEnabled = false;
+    });
+    </script>
+    <script src="{% static 'notecards/jqm/jquery.mobile-1.4.5.min.js' %}"></script>
+
+    <!-- import mathjax files -->
+    <script type="text/x-mathjax-config">
+        // See https://github.com/mathjax/MathJax/blob/master/config/default.js
+        MathJax.Hub.Config({
+            jax: ["input/TeX", "input/AsciiMath", "output/SVG"],
+            extensions: ["tex2jax.js", "asciimath2jax.js"],
+            asciimath2jax: { delimiters: [['$[',']$']] },
+            tex2jax: {
+                inlineMath: [['$$', '$$']],
+                displayMath: [['$$$', '$$$']],
+                processEscapes: false
+            },
+            displayAlign: "left",
+            displayIndent: "2em",
+            skipStartupTypeset: true,
+            messageStyle: "none"
+            });
+    </script>
+    <script src="{% static 'notecards/mathjax/2.7.1/MathJax.js' %}"></script>
+
+    <!-- import codemirror files -->
+    <link rel="stylesheet" href="{% static 'notecards/codemirror-5.40.0/lib/codemirror.css' %}">
+    <link rel="stylesheet" href="{% static 'notecards/codemirror-5.40.0/addon/dialog/dialog.css' %}">
+
+    <script src="{% static 'notecards/codemirror-5.40.0/lib/codemirror.js' %}"></script>
+    <script src="{% static 'notecards/codemirror-5.40.0/addon/dialog/dialog.js' %}"></script>
+    <script src="{% static 'notecards/codemirror-5.40.0/addon/search/searchcursor.js' %}"></script>
+    <script src="{% static 'notecards/codemirror-5.40.0/addon/edit/matchbrackets.js' %}"></script>
+    <script src="{% static 'notecards/codemirror-5.40.0/mode/xml/xml.js' %}"></script>
+    <script src="{% static 'notecards/codemirror-5.40.0/mode/javascript/javascript.js' %}"></script>
+    <script src="{% static 'notecards/codemirror-5.40.0/mode/css/css.js' %}"></script>
+    <script src="{% static 'notecards/codemirror-5.40.0/mode/htmlmixed/htmlmixed.js' %}"></script>
+    <script src="{% static 'notecards/codemirror-5.40.0/mode/python/python.js' %}"></script>
+    <script src="{% static 'notecards/codemirror-5.40.0/mode/markdown/markdown.js' %}"></script>
+    <script src="{% static 'notecards/codemirror-5.40.0/keymap/vim.js' %}"></script>
+
+    <!-- import markdown files -->
+    <script src="{% static 'notecards/markdown/markdown-it.min.js' %}"></script>
+    <script src="{% static 'notecards/markdown/markdown-it-deflist.min.js' %}"></script>
+    <script src="{% static 'notecards/markdown/markdown-it-container.js' %}"></script>
+    <script src="{% static 'notecards/markdown/markdown-it-math-delimiters.js' %}"></script>
+
+    <!-- import custom files -->
+    <script src="{% static 'notecards/overlay.js' %}"></script>
+    <script src="{% static 'notecards/event_listeners.js' %}"></script>
+    <script src="{% static 'notecards/previewer.js' %}"></script>
+    <script src="{% static 'notecards/file_attachment_utils.js' %}"></script>
+    <script src="{% static 'notecards/codemirror_utils.js' %}"></script>
+    <script src="{% static 'notecards/markdown_utils.js' %}"></script>
+    <script src="{% static 'notecards/card_api.js' %}"></script>
+
+    <!-- additional keymaps for codemirror -->
+    <script src="{% static 'notecards/asciimath_keymap.js' %}"></script>
+    <script src="{% static 'notecards/point_adjust_keymap.js' %}"></script>
+
+    <!-- CGraph support -->
+    <script type="text/javascript" src="{% static 'notecards/cgraph/color_palette.js' %}"></script>
+    <script type="text/javascript" src="{% static 'notecards/cgraph/smooth-0.1.7.js' %}"></script>
+    <script type="text/javascript" src="{% static 'notecards/cgraph/cgraph.js' %}"></script>
+    <script type="text/javascript" src="{% static 'notecards/cgraph/cgraph_menu.js' %}"></script>
+
+    <!-- Tag bar support -->
+    <script type="text/javascript" src="{% static 'notecards/tag_bar.js' %}"></script>
+    <script type="text/javascript" src="{% static 'notecards/tag_overlay.js' %}"></script>
+    <script type="text/javascript" src="{% static 'notecards/tag_manager.js' %}"></script>
+    <link rel="stylesheet" type="text/css" href="{% static 'notecards/tag_bar.css' %}" />
+
+    <script type="text/javascript" src="{% static 'notecards/js.cookie.js' %}"></script>
+
+    <script src="{% static 'notecards/notification_bar.js' %}"></script>
+    <link rel="stylesheet" type="text/css" href="{% static 'notecards/notification_bar.css' %}" />
+
+    <link rel="stylesheet" type="text/css" href="{% static 'notecards/cgraph/cgraph_menu.css' %}" />
+
+    <script type="text/javascript" src="{% static 'notecards/clipboard.js' %}"></script>
+
+    <link rel="stylesheet" type="text/css" href="{% static 'notecards/style.css' %}" />
+</head>
+
+<script>
+var fileAttachmentOverlay = null;
+
+$(window).on("load", function() {
+    CGraph.init(DJANGO_STATIC_URL + "/cgraph/", initPage);
+});
+
+function initPage()
+{
+    var md = MarkdownUtils.init();
+
+    notificationBar.init(20002);
+    CardApi.init();
+
+    var queryPreviewer = new Previewer(
+        document.getElementById("query_textarea"),
+        document.getElementById("query_preview"),
+        document.getElementById("query_preview_buffer"),
+        md, CGraph);
+
+    var answerPreviewer = new Previewer(
+        document.getElementById("answer_textarea"),
+        document.getElementById("answer_preview"),
+        document.getElementById("answer_preview_buffer"),
+        md, CGraph);
+
+    queryPreviewer.update();
+    answerPreviewer.update();
+
+    var textClipboard = new TextClipboard();
+
+    fileAttachmentOverlay = FileAttachmentUtils.init(20001, "{{ card.uuid }}", textClipboard);
+    FileAttachmentUtils.addEventListener('files-updated', eventData => {
+        CGraph.setUrlMap(eventData.urlMap);
+
+        queryPreviewer.setUrlMap(eventData.urlMap);
+        queryPreviewer.update();
+
+        answerPreviewer.setUrlMap(eventData.urlMap);
+        answerPreviewer.update();
+    });
+
+    var tagManager = new TagManager(20001, 
+                                    "{{ card.uuid }}",
+                                    document.getElementById("edit_card_tags_container"));
+
+    var userAgent = navigator.userAgent.toLowerCase();
+    var onDesktop = ((userAgent.indexOf("mobile") === -1) &&
+                     (userAgent.indexOf("ipad") === -1) &&
+                     (userAgent.indexOf("android") === -1));
+
+    CodeMirrorUtils.init(
+        document.getElementById("query_textarea"),
+        document.getElementById("answer_textarea"),
+        queryPreviewer,
+        answerPreviewer,
+        {
+            enableVimMode: onDesktop,
+            autoUpdateDelay: onDesktop ? 10 : 1500
+        });
+
+    CodeMirrorUtils.setExitCallback(returnToIndex);
+    CodeMirrorUtils.setSaveCallback((e, l) => updateCard());
+
+    var titleTextArea = document.getElementById("title_textarea");
+    if (titleTextArea.value === "") titleTextArea.focus();
+    else CodeMirrorUtils.setFocus("query", 0);
+
+    var cgraphMenu = new CGraphMenu(CGraph);
+    cgraphMenu.setEventListener(text => CodeMirrorUtils.addCGraphTextToEditor(text));
+}
+
+function updateCard(returnToIndexOnUpdate)
+{
+    CodeMirrorUtils.sync();
+
+    var cardUpdateData = {
+        uuid: "{{ card.uuid }}",
+        title: document.getElementById("title_textarea").value,
+        query: document.getElementById("query_textarea").value,
+        answer: document.getElementById("answer_textarea").value,
+        active: document.getElementById("active_checkbox").checked
+    };
+
+    CardApi.updateCard(cardUpdateData, ()=>{
+        if (Boolean(returnToIndexOnUpdate)) returnToIndex();
+        else notificationBar.postMessage("Card Updated", "success");
+    });
+}
+
+function deleteCard()
+{
+    var doDelete = confirm("Are you sure you want to delete this card?");
+    if (doDelete)
+    {
+        CardApi.deleteCard("{{ card.uuid }}", returnToIndex);
+    }
+}
+
+function returnToIndex()
+{
+    var storage = window.sessionStorage;
+    var url = storage.getItem('index_url');
+    location.assign((url == null) ? '/cards/' : url);
+}
+</script>
+
+<body>
+
+
+<div data-role="header" class="ui-overlay-shadow">
+    <h3>Edit Card</h3>
+    <div data-type="horizontal" data-role="controlgroup" class="ui-btn-right">  
+        <button type="button" data-ajax='false' onclick="returnToIndex()">Return To Index</button>
+    </div>
+</div>
+
+
+{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+
+
+<form id="edit_card_form" action="javascript:void(0);" data-ajax='false' enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <!-- TITLE SECTION -->
+
+    <h4 class="ui-bar ui-bar-a">TITLE</h4>
+    <div class="ui-body">
+        <input id="title_textarea" class="title_input" type="text" name="title" value="{{ card.title }}">
+    </div>
+
+    <!-- QUERY SECTION -->
+
+    <h4 class="ui-bar ui-bar-a">QUERY</h4>
+    <div class="ui-body">
+
+        <div class="ui-grid-a grid-break-point">
+
+            <div class="ui-block-a"><!-- left side of grid -->
+                <div class="ui-body-a">
+                    <div class="ui-bar ui-bar-grey">
+                        <div>
+                            <span style="float:left; font-weight:bold;">Text</span>
+                            <span style="float:right;">
+                                <a
+                                    href="#"
+                                    data-role="none"
+                                    data-theme="a"
+                                    data-mini="true"
+                                    data-inline="true"
+                                    tabindex="-1"
+                                    onclick="fileAttachmentOverlay.show()">(Files)</a>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="ui-body ui-body-a edit-textarea-container">
+                        <textarea
+                            class="query-textarea"
+                            id="query_textarea"
+                            name="query"
+                            form="edit_card_form">{{ card.query }}</textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="ui-block-b">
+                <div class="ui-body-a edit-card-preview-container">
+                    <div class="ui-bar ui-bar-grey">
+                        <h4>Preview</h4>
+                    </div>
+                    <div class="ui-body ui-body-a">
+                        <div id="query_preview" class="query-text" style="border:0px solid; padding: 3px; width:100%; margin-top:5px"></div>
+                        <div id="query_preview_buffer" class="query-text" style="border:0px solid; padding: 3px; width:100%; margin-top:5px; 
+                            visibility:hidden; position:absolute; top:0; left: 0"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ANSWER SECTION -->
+
+    <h4 class="ui-bar ui-bar-a">ANSWER</h4>
+    <div class="ui-body">
+
+        <div class="ui-grid-a grid-break-point">
+
+            <div class="ui-block-a"><!-- left side of grid -->
+                <div class="ui-body-a">
+                    <div class="ui-bar ui-bar-grey">
+                        <div>
+                            <span style="float:left; font-weight:bold;">Text</span>
+                            <span style="float:right;">
+                                <a
+                                    href="#"
+                                    data-role="none"
+                                    data-theme="a"
+                                    data-mini="true"
+                                    data-inline="true"
+                                    tabindex="-1"
+                                    onclick="fileAttachmentOverlay.show()">(Files)</a>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="ui-body ui-body-a edit-textarea-container">
+                        <textarea
+                            class="answer-textarea"
+                            id="answer_textarea"
+                            name="answer"
+                            form="edit_card_form">{{ card.answer }}</textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="ui-block-b">
+                <div class="ui-body-a edit-card-preview-container">
+                    <div class="ui-bar ui-bar-grey">
+                        <h4>Preview</h4>
+                    </div>
+                    <div class="ui-body ui-body-a">
+                        <div id="answer_preview" class="answer-text" style="border:0px solid; padding: 3px; width:100%; margin-top:5px"></div>
+                        <div id="answer_preview_buffer" class="answer-text" style="border:0px solid; padding: 3px; width:100%; margin-top:5px; 
+                            visibility:hidden; position:absolute; top:0; left: 0"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TAGS SECTION -->
+
+    <h4 class="ui-bar ui-bar-a">TAGS</h4>
+    <div class="ui-body">
+        <div id="edit_card_tags_container" class="edit-card-tags-container"></div>
+    </div>
+
+    <!-- ACTIVE SECTION -->
+
+    <p>
+    <label for="active_checkbox">Active</label>
+    <input type="checkbox" name="active" id="active_checkbox" value="active" {% if card.active %} checked {% endif %}>
+    </p>
+
+    <!-- STATUS SECTION -->
+
+    <div class="ui-body">
+        <div class="ui-body ui-body-a ui-corner-all">
+            <p><strong>Spacing Bin:</strong> {{ card.spacing_bin }}</p>
+            <p><strong>Creation Date:</strong> {{ card.creation_date|date:"D M d, Y" }}</p>
+            <p><strong>Next Review Date:</strong> {{ card.next_retrieval_date|date:"D M d, Y" }}</p>
+            <p><strong>Retrieval History:</strong>
+                {% if retrieval_attempts %}
+                    <div class="ui-body ui-body-a ui-corner-all">
+                        <table data-role="table" id="retrieval_attempts_table" data-mode="reflow" class="retrieval-attempts-list ui-responsive">
+                            <thead>
+                                <tr>
+                                    <th>Retrieval Date</th>
+                                    <th>Retrieved</th>
+                                    <th>Bin</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for retrieval_attempt in retrieval_attempts %}
+                                    <tr>
+                                        <td>{{ retrieval_attempt.retrieval_date }}</td>
+                                        <td>{{ retrieval_attempt.retrieved }}</td>
+                                        <td>{{ retrieval_attempt.spacing_bin }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                None
+                {% endif %}
+            </p>
+            <p><strong>UUID:</strong> {{ card.uuid }}</p>
+
+        </div>
+    </div>
+
+    <div class="ui-body">
+        <input data-inline="true" type="button" value="Delete" onclick="deleteCard()" />
+        <input data-inline="true" type="button" value="Update" onclick="updateCard(true)" />
+    </div>
+</form>
+
+</body>
+</html>
+

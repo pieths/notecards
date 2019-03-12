@@ -1,0 +1,42 @@
+<html>
+<head>
+<script type="text/javascript" src="./cgraph.js"></script>
+<script type="text/javascript" src="./cgraph_test.js"></script>
+<script>
+function runTests()
+{
+    var logger_output_container = document.getElementById("logger_output_container");
+    var logger = {
+        log: message => {
+            let element = document.createElement('pre');
+            var textNode = document.createTextNode(message);
+            element.appendChild(textNode);
+            element.setAttribute('class', 'logger-log');
+            logger_output_container.append(element);
+        },
+        error: message => {
+            let element = document.createElement('pre');
+            var textNode = document.createTextNode(message);
+            element.appendChild(textNode);
+            element.setAttribute('class', 'logger-error');
+            logger_output_container.append(element);
+        }
+    };
+
+    cgraphTester.runTests(logger);
+}
+</script>
+<style>
+.logger-error
+{
+    padding-left: 2em;
+    color: red;
+}
+</style>
+</head>
+<body onload="runTests()">
+<h3>Test Suite For CGraph</h3>
+<div id="logger_output_container"></div>
+</body>
+</html>
+
