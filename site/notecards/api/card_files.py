@@ -4,6 +4,7 @@
 from django.http import JsonResponse
 from django.urls import re_path
 from django.utils import timezone
+from django.conf import settings
 from notecards import utils
 from notecards.models import FileAttachment
 
@@ -42,7 +43,7 @@ def new_card_file_attachment(request, card):
                                          media_type=media_type)
         file_attachment.save()
 
-        file_path = "./media/" + str(file_attachment.file)
+        file_path = settings.MEDIA_ROOT + "/" + str(file_attachment.file)
 
         file_attachment.sha_512 = utils.get_file_sha_512(file_path)
         file_attachment.save()
