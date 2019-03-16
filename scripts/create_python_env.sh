@@ -1,14 +1,20 @@
 # Copyright (c) 2019, Piet Hein Schouten. All rights reserved.
 # Licensed under the terms of the MIT license.
 
+if [ $# -gt 0 ]; then
+    PYTHON="$1/python3"
+else
+    PYTHON=python3
+fi
+
 echo
-echo Using `python3 --version` located in `which python3`
+echo Using `$PYTHON --version` located in `which $PYTHON`
 echo
 echo Creating the base python environment...
 echo
 
 # See https://docs.python.org/3/library/venv.html
-python3 -m venv python_env
+$PYTHON -m venv python_env
 
 . ./python_env/bin/activate
 
