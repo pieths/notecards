@@ -6,6 +6,7 @@ import subprocess
 
 from datetime import datetime, timedelta, time
 
+from django.conf import settings
 from django.utils import timezone
 from django.http import Http404, JsonResponse
 from django.db import IntegrityError
@@ -557,7 +558,7 @@ def create_file_attachment_obj(file_attachment, output_format=""):
         'media_type': file_attachment.media_type
     }
 
-    local_path = "./media/" + str(file_attachment.file)
+    local_path = settings.MEDIA_ROOT + "/" + str(file_attachment.file)
 
     if options['include_url']:
         file_attachment_obj['url'] = file_attachment.file.url
