@@ -42,7 +42,7 @@ chunks called _cards_ and includes the following features:
 
 ### Requirements
 
-* Python 3.5+
+* Python 3.6+
 
 ### Command Line Installation (Linux/sqlite)
 
