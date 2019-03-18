@@ -10,5 +10,6 @@ site/main/__pycache__/
 site/notecards/__pycache__/
 site/notecards/api/__pycache__/
 site/notecards/migrations/__pycache__/
+site/notecards/models/__pycache__/
 site/notecards/templatetags/__pycache__/
 site/notecards/tests/__pycache__/
