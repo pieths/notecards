@@ -5,6 +5,10 @@ from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseNotFound, HttpResponseNotAllowed
 from django.core.serializers.json import DjangoJSONEncoder
 
+from django.conf.urls.static import static
+from django.conf import settings
+from django.views import static
+
 from .models import RetrievalAttempt
 
 import json
@@ -84,19 +88,31 @@ def serve_media(request, card_uuid, user_id, file_name):
     if not card:
         return HttpResponseNotFound()
 
-    response = HttpResponse()
+    if settings.DEBUG:
+        file_path = '{}/{}/{}/{}/{}/files/{}'
+        file_path = file_path.format(card_uuid[0],
+                                     card_uuid[1],
+                                     card_uuid[2],
+                                     card_uuid,
+                                     card.user.pk,
+                                     file_name)
 
-    # Content-type will be detected by nginx
-    del response['Content-Type']
+        return static.serve(request, file_path, settings.MEDIA_ROOT)
 
-    protected_path = '/protected/media/{}/{}/{}/{}/{}/files/{}'
-    protected_path = protected_path.format(card_uuid[0],
-                                           card_uuid[1],
-                                           card_uuid[2],
-                                           card_uuid,
-                                           card.user.pk,
-                                           file_name)
+    else:
+        response = HttpResponse()
 
-    response['X-Accel-Redirect'] = protected_path
-    return response
+        # Content-type will be detected by nginx
+        del response['Content-Type']
+
+        protected_path = '/protected/media/{}/{}/{}/{}/{}/files/{}'
+        protected_path = protected_path.format(card_uuid[0],
+                                               card_uuid[1],
+                                               card_uuid[2],
+                                               card_uuid,
+                                               card.user.pk,
+                                               file_name)
+
+        response['X-Accel-Redirect'] = protected_path
+        return response
 
