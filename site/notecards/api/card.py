@@ -5,7 +5,7 @@ from django.http import JsonResponse
 from django.urls import re_path
 from django.utils import timezone
 from notecards import utils
-from notecards.models import FileAttachment
+from notecards.models import Card, FileAttachment
 
 import json
 
@@ -14,7 +14,7 @@ def process_request(request, card_uuid):
     if not request.user.is_authenticated:
         return utils.create_401_json_response()
 
-    card = utils.get_card_from_uuid(card_uuid, request.user)
+    card = Card.from_uuid(card_uuid, request.user)
     if not card:
         return utils.create_404_json_response("Card")
 

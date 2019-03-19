@@ -18,3 +18,12 @@ class RetrievalAttempt(models.Model):
             + " Referenced card id: " + str(self.card.pk) \
             + " spacing_bin:" + str(self.spacing_bin)
 
+    @staticmethod
+    def from_id(retrieval_attempt_id):
+        try:
+            retrieval_attempt = RetrievalAttempt.objects.get(pk__exact=retrieval_attempt_id)
+        except:
+            retrieval_attempt = None
+
+        return retrieval_attempt
+

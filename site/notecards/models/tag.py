@@ -15,3 +15,21 @@ class Tag(models.Model):
     def __str__(self):
         return 'id: {0} label: {1}'.format(str(self.pk), self.label)
 
+    @staticmethod
+    def from_label(label, user):
+        try:
+            tag = Tag.objects.get(label__exact=label, user=user)
+        except:
+            tag = None
+
+        return tag
+
+    @staticmethod
+    def from_id(tag_id):
+        try:
+            tag = Tag.objects.get(pk__exact=tag_id)
+        except:
+            tag = None
+
+        return tag
+

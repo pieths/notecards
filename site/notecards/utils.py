@@ -754,7 +754,7 @@ def import_tag(tag_obj, user):
             tag.save()
 
         except IntegrityError:
-            tag = get_tag_from_label(tag.label, user)
+            tag = Tag.from_label(tag.label, user)
 
         except:
             tag = None
@@ -772,49 +772,4 @@ def import_tags_from_list(tag_list, user):
             tags.append(tag)
 
     return sorted(tags, key=lambda tag: tag.label)
-
-
-def get_card_from_uuid(uuid, user):
-    try:
-        card = Card.objects.get(uuid__exact=uuid, user=user)
-    except:
-        card = None
-
-    return card
-
-
-def get_file_attachment_from_id(file_attachment_id):
-    try:
-        file_attachment = FileAttachment.objects.get(pk__exact=file_attachment_id)
-    except:
-        file_attachment = None
-
-    return file_attachment
-
-
-def get_retrieval_attempt_from_id(retrieval_attempt_id):
-    try:
-        retrieval_attempt = RetrievalAttempt.objects.get(pk__exact=retrieval_attempt_id)
-    except:
-        retrieval_attempt = None
-
-    return retrieval_attempt
-
-
-def get_tag_from_id(tag_id):
-    try:
-        tag = Tag.objects.get(pk__exact=tag_id)
-    except:
-        tag = None
-
-    return tag
-
-
-def get_tag_from_label(label, user):
-    try:
-        tag = Tag.objects.get(label__exact=label, user=user)
-    except:
-        tag = None
-
-    return tag
 

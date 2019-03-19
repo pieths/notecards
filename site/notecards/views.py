@@ -9,7 +9,7 @@ from django.conf.urls.static import static
 from django.conf import settings
 from django.views import static
 
-from .models import RetrievalAttempt
+from notecards.models import Card, RetrievalAttempt
 
 import json
 from . import utils
@@ -35,7 +35,7 @@ def edit_card(request, card_uuid):
     if not request.user.is_authenticated:
         return HttpResponse('Unauthorized', status=401)
 
-    card = utils.get_card_from_uuid(card_uuid, request.user)
+    card = Card.from_uuid(card_uuid, request.user)
 
     if not card:
         return HttpResponseNotFound()
@@ -56,7 +56,7 @@ def review_card(request, card_uuid):
     if not request.user.is_authenticated:
         return HttpResponse('Unauthorized', status=401)
 
-    card = utils.get_card_from_uuid(card_uuid, request.user)
+    card = Card.from_uuid(card_uuid, request.user)
     card_obj = utils.create_card_object(card)
 
     url_map = { f['name']: f['url'] for f in card_obj['files'] }
@@ -83,7 +83,7 @@ def serve_media(request, card_uuid, user_id, file_name):
     if int(user_id) != request.user.pk:
         return HttpResponse('Unauthorized', status=401)
 
-    card = utils.get_card_from_uuid(card_uuid, request.user)
+    card = Card.from_uuid(card_uuid, request.user)
 
     if not card:
         return HttpResponseNotFound()

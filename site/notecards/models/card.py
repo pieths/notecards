@@ -45,3 +45,12 @@ class Card(models.Model):
             + " answer:[" + self.answer[:40] + "]" \
             + " sha_512:[" + self.sha_512 + "]"
 
+    @staticmethod
+    def from_uuid(uuid, user):
+        try:
+            card = Card.objects.get(uuid__exact=uuid, user=user)
+        except:
+            card = None
+
+        return card
+

@@ -4,17 +4,18 @@
 from django.http import JsonResponse
 from django.urls import re_path
 from notecards import utils
+from notecards.models import Card, RetrievalAttempt
 
 
 def process_request(request, card_uuid, retrieval_attempt_id):
     if not request.user.is_authenticated:
         return utils.create_401_json_response()
 
-    card = utils.get_card_from_uuid(card_uuid, request.user)
+    card = Card.from_uuid(card_uuid, request.user)
     if not card:
         return utils.create_404_json_response("Card")
 
-    retrieval_attempt = utils.get_retrieval_attempt_from_id(retrieval_attempt_id)
+    retrieval_attempt = RetrievalAttempt.from_id(retrieval_attempt_id)
     if not retrieval_attempt:
         return utils.create_404_json_response("RetrievalAttempt")
 

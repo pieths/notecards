@@ -33,3 +33,12 @@ class FileAttachment(models.Model):
             + " media_type: "  + self.media_type \
             + " card_id: " + str(self.card.pk)
 
+    @staticmethod
+    def from_id(file_attachment_id):
+        try:
+            file_attachment = FileAttachment.objects.get(pk__exact=file_attachment_id)
+        except:
+            file_attachment = None
+
+        return file_attachment
+
