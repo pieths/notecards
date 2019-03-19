@@ -5,19 +5,11 @@ from django.db import models
 from django.utils import timezone
 
 from .card import Card
+from notecards import media
 
 
 def get_file_path(instance, filename):
-    card_uuid = instance.card.uuid
-    user_pk   = instance.card.user.pk
-    path = "{}/{}/{}/{}/{}/files/{}".format(
-            card_uuid[0],
-            card_uuid[1],
-            card_uuid[2],
-            card_uuid,
-            user_pk,
-            filename)
-    return path
+    return media.get_file_path(instance.card, filename)
 
 
 class FileAttachment(models.Model):

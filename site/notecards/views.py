@@ -5,10 +5,6 @@ from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseNotFound, HttpResponseNotAllowed
 from django.core.serializers.json import DjangoJSONEncoder
 
-from django.conf.urls.static import static
-from django.conf import settings
-from django.views import static
-
 from notecards.models import Card, RetrievalAttempt
 
 import json
@@ -71,48 +67,4 @@ def review_card(request, card_uuid):
 
     else:
         return HttpResponseNotFound()
-
-
-def serve_media(request, card_uuid, user_id, file_name):
-    if request.method != 'GET':
-        return HttpResponseNotAllowed(['GET'])
-
-    if not request.user.is_authenticated:
-        return HttpResponse('Unauthorized', status=401)
-
-    if int(user_id) != request.user.pk:
-        return HttpResponse('Unauthorized', status=401)
-
-    card = Card.from_uuid(card_uuid, request.user)
-
-    if not card:
-        return HttpResponseNotFound()
-
-    if settings.DEBUG:
-        file_path = '{}/{}/{}/{}/{}/files/{}'
-        file_path = file_path.format(card_uuid[0],
-                                     card_uuid[1],
-                                     card_uuid[2],
-                                     card_uuid,
-                                     card.user.pk,
-                                     file_name)
-
-        return static.serve(request, file_path, settings.MEDIA_ROOT)
-
-    else:
-        response = HttpResponse()
-
-        # Content-type will be detected by nginx
-        del response['Content-Type']
-
-        protected_path = '/protected/media/{}/{}/{}/{}/{}/files/{}'
-        protected_path = protected_path.format(card_uuid[0],
-                                               card_uuid[1],
-                                               card_uuid[2],
-                                               card_uuid,
-                                               card.user.pk,
-                                               file_name)
-
-        response['X-Accel-Redirect'] = protected_path
-        return response
 
