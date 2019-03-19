@@ -53,16 +53,17 @@ def review_card(request, card_uuid):
         return HttpResponse('Unauthorized', status=401)
 
     card = Card.from_uuid(card_uuid, request.user)
-    card_obj = utils.create_card_object(card)
-
-    url_map = { f['name']: f['url'] for f in card_obj['files'] }
-
-    context = {
-        'card': card_obj,
-        'url_map_json': json.dumps(url_map, cls=DjangoJSONEncoder)
-    }
 
     if card:
+        card_obj = utils.create_card_object(card)
+
+        url_map = { f['name']: f['url'] for f in card_obj['files'] }
+
+        context = {
+            'card': card_obj,
+            'url_map_json': json.dumps(url_map, cls=DjangoJSONEncoder)
+        }
+
         return render(request, 'notecards/review_card.html', context)
 
     else:
