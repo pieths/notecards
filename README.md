@@ -38,65 +38,11 @@ chunks called _cards_ and includes the following features:
 
 * Basic __multi-user support__. 
 
+
 ## Installation
 
-### Requirements
+See INSTALL.md for details.
 
-* Python 3.6+
-
-### Command Line Installation (Linux/sqlite)
-
-Switch to the root directory of the repository and create the virtual
-python environment using the `create_python_env.sh` script.
-
-```console
-$ ./scripts/create_python_env.sh
-```
-
-Set the following environmental variables to the desired values.
-
-```console
-$ export NOTECARDS_APP_SECRET_KEY="..."
-
-# Leave blank for default which is localhost
-$ export NOTECARDS_APP_ALLOWED_HOSTS="192.168.1.1, ..."
-
-$ export DJANGO_SETTINGS_MODULE=main.settings_dev_sqlite
-```
-
-These environmental variables can also be added to the end of the virtual environment
-activate script (`./python_env/bin/activate`) so that they are automatically set when
-the virtual environment is activated.
-
-Activate the python virtual environment. Note, this file must be _sourced_ to
-work correctly.
-
-```console
-$ . ./python_env/bin/activate
-```
-
-Navigate to the `site` directory and create the initial database.
-
-```console
-$ cd site
-$ python manage.py migrate
-```
-
-Create a user. A user is required for adding new cards to the system.
-
-```console
-$ python ../scripts/create_user.py
-```
-
-
-The installation should now be complete. To test the installation run the following
-command in the `site` directory and try an access the server in a web browser using
-any of the addresses specified in the `NOTECARDS_APP_ALLOWED_HOSTS` environmental
-variable (or `localhost:8000` if the variable was left blank).
-
-```console
-$ python manage.py runserver 0:8000
-```
 
 ## Basic Usage
 
