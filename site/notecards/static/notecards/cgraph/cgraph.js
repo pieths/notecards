@@ -210,6 +210,7 @@ const CGraph = (function() {
         const MODE_GROUP = DELIMITED_BLOCKS_START_VALUE;
         const MODE_STRING = DELIMITED_BLOCKS_START_VALUE + 1;
         const MODE_SCRIPT = DELIMITED_BLOCKS_START_VALUE + 2;
+        const MODE_GROUP_SCRIPT = DELIMITED_BLOCKS_START_VALUE + 3;
 
         let modeNames =
         {
@@ -268,11 +269,13 @@ const CGraph = (function() {
             let mode = MODE_UNKNOWN;
             let newMode = MODE_UNKNOWN;
 
-            let checkForDelimiter = (ch, open, close) =>
+            let checkForDelimiter = (ch, open, close, newModeArg) =>
             {
+                if (newModeArg === undefined) newModeArg = MODE_UNKNOWN;
+
                 if (ch == close)
                 {
-                    if (delimCount == 0) newMode = MODE_UNKNOWN;
+                    if (delimCount == 0) newMode = newModeArg;
                     else delimCount--;
                 }
                 else if (ch == open) delimCount++;
@@ -287,9 +290,14 @@ const CGraph = (function() {
                 /* Given a mode and a ch, determine the new mode */
 
                 if (ch == "") newMode = MODE_INPUT_END;
-                else if (mode == MODE_GROUP) checkForDelimiter(ch, '(', ')');
+                else if (mode == MODE_GROUP)
+                {
+                    if (ch == ')') newMode = MODE_UNKNOWN;
+                    else if (ch == '{') newMode = MODE_GROUP_SCRIPT;
+                }
                 else if (mode == MODE_STRING) checkForDelimiter(ch, '"', '"');
                 else if (mode == MODE_SCRIPT) checkForDelimiter(ch, '{', '}');
+                else if (mode == MODE_GROUP_SCRIPT) checkForDelimiter(ch, '{', '}', MODE_GROUP);
                 else if ((mode == MODE_UNKNOWN) ||
                          (mode == MODE_COMMAND_BOUNDARY) ||
                          (mode == MODE_LINE_CONTINUATION))
@@ -319,6 +327,8 @@ const CGraph = (function() {
                     }
                     else /* reached the end of the initial input string */
                     {
+                        if (mode == MODE_GROUP_SCRIPT) mode = MODE_GROUP;
+
                         if (values.length > 0)
                         {
                             parts.push({type: mode, value: values.join('')});
@@ -332,9 +342,21 @@ const CGraph = (function() {
                 }
                 else if (newMode != mode)
                 {
-                    if (i > start) values.push(input.substring(start, i));
+                    if (i > start)
+                    {
+                        let value = input.substring(start, i);
 
-                    if (values.length > 0)
+                        if (mode == MODE_GROUP_SCRIPT)
+                        {
+                            let scriptResult = jsContext.execute(value);
+                            values.push(scriptResult);
+                        }
+                        else values.push(value);
+                    }
+
+                    if ((values.length > 0) &&
+                        (mode != MODE_GROUP_SCRIPT) &&
+                        (newMode != MODE_GROUP_SCRIPT))
                     {
                         let value = values.join('');
                         values = [];
