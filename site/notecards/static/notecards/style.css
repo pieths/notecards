@@ -1,3 +1,8 @@
+:root
+{
+  --edit-text-height: 30em;
+}
+
 .ui-bar-a,
 .ui-title,
 .ui-body-a,
@@ -45,26 +50,39 @@
     height: 5em;
 }
 
-.edit-textarea-container
-{
-    padding: 0;
-}
-
 .hidden-element
 {
     display: none;
 }
 
+#edit_query_textarea_container,
+#edit_query_preview_container,
+#edit_answer_textarea_container,
+#edit_answer_preview_container
+{
+    border: 1px solid #ddd;
+    height: var(--edit-text-height);
+}
+
+#edit_query_textarea_container .CodeMirror,
+#edit_answer_textarea_container .CodeMirror
+{
+    height: 100%;
+}
+
 @media all and (max-width: 60em)
 {
-    .grid-break-point .ui-block-a,
-    .grid-break-point .ui-block-b
+    #query_section .ui-block-a,
+    #query_section .ui-block-b,
+    #answer_section .ui-block-a,
+    #answer_section .ui-block-b
     {
         width: 100%;
         float: none;
     }
 
-    .edit-card-preview-container
+    #query_section .ui-block-b,
+    #answer_section .ui-block-b
     {
         margin-top: 1em;
     }
@@ -73,12 +91,14 @@
 /* simulate if/else with media query */
 @media not all and (max-width: 60em)
 {
-    .ui-block-b
+    #query_section .ui-block-b,
+    #answer_section .ui-block-b
     {
         padding-left: 7px;
     }
 
-    .edit-card-preview-container
+    #query_section .ui-block-b,
+    #answer_section .ui-block-b
     {
         margin-top: 0;
     }
@@ -282,17 +302,11 @@
     text-align:center;
 }
 
-.CodeMirror
-{
-    height: 35em;
-}
-
 #query_preview,
 #query_preview_buffer,
 #answer_preview,
 #answer_preview_buffer
 {
-    max-height: 27.8em;
     overflow-y: auto;
 }
 

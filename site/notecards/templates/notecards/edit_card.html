@@ -239,7 +239,7 @@ function returnToIndex()
     <h4 class="ui-bar ui-bar-a">QUERY</h4>
     <div class="ui-body">
 
-        <div class="ui-grid-a grid-break-point">
+        <div id="query_section" class="ui-grid-a">
 
             <div class="ui-block-a"><!-- left side of grid -->
                 <div class="ui-body-a">
@@ -258,7 +258,7 @@ function returnToIndex()
                             </span>
                         </div>
                     </div>
-                    <div class="ui-body ui-body-a edit-textarea-container">
+                    <div id="edit_query_textarea_container">
                         <textarea
                             class="query-textarea"
                             id="query_textarea"
@@ -268,14 +268,14 @@ function returnToIndex()
                 </div>
             </div>
 
-            <div class="ui-block-b">
-                <div class="ui-body-a edit-card-preview-container">
+            <div class="ui-block-b"><!-- right side of grid -->
+                <div class="ui-body-a">
                     <div class="ui-bar ui-bar-grey">
                         <h4>Preview</h4>
                     </div>
-                    <div class="ui-body ui-body-a">
-                        <div id="query_preview" class="query-text" style="border:0px solid; padding: 3px; width:100%; margin-top:5px"></div>
-                        <div id="query_preview_buffer" class="query-text" style="border:0px solid; padding: 3px; width:100%; margin-top:5px; 
+                    <div id="edit_query_preview_container">
+                        <div id="query_preview" class="query-text" style="border:0px solid; width:auto; height: 100%; padding: 0 1em;"></div>
+                        <div id="query_preview_buffer" class="query-text" style="border:0px solid; width:auto; height: 100%; padding: 0 1em;
                             visibility:hidden; position:absolute; top:0; left: 0"></div>
                     </div>
                 </div>
@@ -288,7 +288,7 @@ function returnToIndex()
     <h4 class="ui-bar ui-bar-a">ANSWER</h4>
     <div class="ui-body">
 
-        <div class="ui-grid-a grid-break-point">
+        <div id="answer_section" class="ui-grid-a">
 
             <div class="ui-block-a"><!-- left side of grid -->
                 <div class="ui-body-a">
@@ -307,7 +307,7 @@ function returnToIndex()
                             </span>
                         </div>
                     </div>
-                    <div class="ui-body ui-body-a edit-textarea-container">
+                    <div id="edit_answer_textarea_container">
                         <textarea
                             class="answer-textarea"
                             id="answer_textarea"
@@ -317,14 +317,14 @@ function returnToIndex()
                 </div>
             </div>
 
-            <div class="ui-block-b">
-                <div class="ui-body-a edit-card-preview-container">
+            <div class="ui-block-b"><!-- right side of grid -->
+                <div class="ui-body-a">
                     <div class="ui-bar ui-bar-grey">
                         <h4>Preview</h4>
                     </div>
-                    <div class="ui-body ui-body-a">
-                        <div id="answer_preview" class="answer-text" style="border:0px solid; padding: 3px; width:100%; margin-top:5px"></div>
-                        <div id="answer_preview_buffer" class="answer-text" style="border:0px solid; padding: 3px; width:100%; margin-top:5px; 
+                    <div id="edit_answer_preview_container">
+                        <div id="answer_preview" class="answer-text" style="border:0px solid; width:auto; height: 100%; padding: 0 1em;"></div>
+                        <div id="answer_preview_buffer" class="answer-text" style="border:0px solid; width:auto; height: 100%; padding: 0 1em;
                             visibility:hidden; position:absolute; top:0; left: 0"></div>
                     </div>
                 </div>
