@@ -177,7 +177,7 @@ function initPage()
     adjustTextEditorHeight(0);
 }
 
-function adjustTextEditorHeight(heightIncrement)
+function adjustTextEditorHeight(heightIncrement, anchor)
 {
     const height_storage_key = "edit_texteditor_height";
     let height = window.localStorage.getItem(height_storage_key);
@@ -188,7 +188,19 @@ function adjustTextEditorHeight(heightIncrement)
 
     window.localStorage.setItem(height_storage_key, height);
 
+    let anchorY = (anchor !== undefined) ?  anchor.getBoundingClientRect().y : 0;
+
     document.documentElement.style.setProperty('--edit-text-height', `${height}em`);
+
+    if (anchor !== undefined)
+    {
+        /*
+         * Adjust the window scroll so that the clicked
+         * button stays in the same location.
+         */
+        let scrollY =  anchor.getBoundingClientRect().y - anchorY;
+        window.scrollBy(0, scrollY);
+    }
 }
 
 function updateCard(returnToIndexOnUpdate)
@@ -267,12 +279,12 @@ function returnToIndex()
                                     data-mini="false"
                                     data-inline="true"
                                     tabindex="-1"
-                                    onclick="adjustTextEditorHeight(5)">+</button>
+                                    onclick="adjustTextEditorHeight(5, this)">+</button>
                                 <button
                                     data-mini="false"
                                     data-inline="true"
                                     tabindex="-1"
-                                    onclick="adjustTextEditorHeight(-5)">-</button>
+                                    onclick="adjustTextEditorHeight(-5, this)">-</button>
                                 <button
                                     data-mini="false"
                                     data-inline="true"
@@ -319,6 +331,16 @@ function returnToIndex()
                         <div class="edit-texteditor-header">
                             <span style="float:left; font-weight:bold;">Text</span>
                             <span style="float:right;">
+                                <button
+                                    data-mini="false"
+                                    data-inline="true"
+                                    tabindex="-1"
+                                    onclick="adjustTextEditorHeight(5, this)">+</button>
+                                <button
+                                    data-mini="false"
+                                    data-inline="true"
+                                    tabindex="-1"
+                                    onclick="adjustTextEditorHeight(-5, this)">-</button>
                                 <button
                                     data-mini="false"
                                     data-inline="true"
