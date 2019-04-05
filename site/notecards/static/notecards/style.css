@@ -70,6 +70,16 @@
     height: 100%;
 }
 
+.edit-texteditor-header button
+{
+    margin: -2px 0.1em;
+    margin-right: 0;
+    padding: 0 0.8em;
+    text-shadow: none !important;
+    box-shadow: none;
+    color: #888 !important;
+}
+
 @media all and (max-width: 60em)
 {
     #query_section .ui-block-a,
