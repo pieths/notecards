@@ -173,6 +173,22 @@ function initPage()
 
     var cgraphMenu = new CGraphMenu(CGraph);
     cgraphMenu.setEventListener(text => CodeMirrorUtils.addCGraphTextToEditor(text));
+
+    adjustTextEditorHeight(0);
+}
+
+function adjustTextEditorHeight(heightIncrement)
+{
+    const height_storage_key = "edit_texteditor_height";
+    let height = window.localStorage.getItem(height_storage_key);
+
+    height = (height === null) ? 30 : Number(height);
+    height += heightIncrement;
+    if (height < 15) height = 15;
+
+    window.localStorage.setItem(height_storage_key, height);
+
+    document.documentElement.style.setProperty('--edit-text-height', `${height}em`);
 }
 
 function updateCard(returnToIndexOnUpdate)
@@ -247,6 +263,16 @@ function returnToIndex()
                         <div class="edit-texteditor-header">
                             <span style="float:left; font-weight:bold;">Text</span>
                             <span style="float:right;">
+                                <button
+                                    data-mini="false"
+                                    data-inline="true"
+                                    tabindex="-1"
+                                    onclick="adjustTextEditorHeight(5)">+</button>
+                                <button
+                                    data-mini="false"
+                                    data-inline="true"
+                                    tabindex="-1"
+                                    onclick="adjustTextEditorHeight(-5)">-</button>
                                 <button
                                     data-mini="false"
                                     data-inline="true"
