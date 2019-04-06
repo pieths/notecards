@@ -176,24 +176,50 @@ function initPage()
 
     adjustTextEditorHeight('query', 0);
     adjustTextEditorHeight('answer', 0);
+
+    let bodyElement = document.getElementsByTagName('body')[0];
+    bodyElement.addEventListener('keydown', function (evt) {
+        if ((evt.key == "+") && evt.ctrlKey && evt.shiftKey)
+        {
+            let editor = CodeMirrorUtils.getFocusedEditorName();
+            adjustTextEditorHeight(editor, 5);
+            evt.preventDefault();
+        }
+        else if ((evt.key == "_") && evt.ctrlKey && evt.shiftKey)
+        {
+            let editor = CodeMirrorUtils.getFocusedEditorName();
+            adjustTextEditorHeight(editor, -5);
+            evt.preventDefault();
+        }
+    });
 }
 
 function adjustTextEditorHeight(editor, heightIncrement)
 {
-    let key = (editor == "query") ? "query_editor_height" : "answer_editor_height";
-    let height = window.localStorage.getItem(key);
+    let key = "";
+    let varName = "";
 
-    height = (height === null) ? 30 : Number(height);
-    height += heightIncrement;
-    if (height < 15) height = 15;
+    if (editor == "query")
+    {
+        key = "query_editor_height";
+        varName = "--query-editor-height";
+    }
+    else if (editor == "answer")
+    {
+        key = "answer_editor_height";
+        varName = "--answer-editor-height";
+    }
 
-    window.localStorage.setItem(key, height);
+    if (key != "")
+    {
+        let height = window.localStorage.getItem(key);
+        height = (height === null) ? 30 : Number(height);
+        height += heightIncrement;
+        if (height < 15) height = 15;
+        window.localStorage.setItem(key, height);
 
-    let varName = (editor == "query") ?
-                  "--query-editor-height" :
-                  "--answer-editor-height";
-
-    document.documentElement.style.setProperty(varName, `${height}em`);
+        document.documentElement.style.setProperty(varName, `${height}em`);
+    }
 }
 
 function updateCard(returnToIndexOnUpdate)

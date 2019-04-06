@@ -443,6 +443,16 @@ const CodeMirrorUtils = (function() {
         }
     }
 
+    function getFocusedEditorName()
+    {
+        let name = "";
+
+        if (queryTextEditor.hasFocus()) name = 'query';
+        else if (answerTextEditor.hasFocus()) name = 'answer';
+
+        return name;
+    }
+
     function sync()
     {
         // Syncs the editors with their respective textareas
@@ -462,6 +472,7 @@ const CodeMirrorUtils = (function() {
         setSaveCallback: function(callback) { setSaveCallback(callback); },
         setExitCallback: function(callback) { setExitCallback(callback); },
         setFocus: function(editorName, line) { setFocus(editorName, line); },
+        getFocusedEditorName: function() { return getFocusedEditorName(); },
         sync: function() { sync(); }
     };
 })();
