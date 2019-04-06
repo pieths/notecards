@@ -1,6 +1,7 @@
 :root
 {
-  --edit-text-height: 30em;
+  --query-editor-height: 30em;
+  --answer-editor-height: 30em;
 }
 
 .ui-bar-a,
@@ -56,12 +57,17 @@
 }
 
 #edit_query_textarea_container,
-#edit_query_preview_container,
+#edit_query_preview_container
+{
+    border: 1px solid #ddd;
+    height: var(--query-editor-height);
+}
+
 #edit_answer_textarea_container,
 #edit_answer_preview_container
 {
     border: 1px solid #ddd;
-    height: var(--edit-text-height);
+    height: var(--answer-editor-height);
 }
 
 #edit_query_textarea_container .CodeMirror,

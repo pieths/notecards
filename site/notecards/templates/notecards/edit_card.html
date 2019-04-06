@@ -174,33 +174,26 @@ function initPage()
     var cgraphMenu = new CGraphMenu(CGraph);
     cgraphMenu.setEventListener(text => CodeMirrorUtils.addCGraphTextToEditor(text));
 
-    adjustTextEditorHeight(0);
+    adjustTextEditorHeight('query', 0);
+    adjustTextEditorHeight('answer', 0);
 }
 
-function adjustTextEditorHeight(heightIncrement, anchor)
+function adjustTextEditorHeight(editor, heightIncrement)
 {
-    const height_storage_key = "edit_texteditor_height";
-    let height = window.localStorage.getItem(height_storage_key);
+    let key = (editor == "query") ? "query_editor_height" : "answer_editor_height";
+    let height = window.localStorage.getItem(key);
 
     height = (height === null) ? 30 : Number(height);
     height += heightIncrement;
     if (height < 15) height = 15;
 
-    window.localStorage.setItem(height_storage_key, height);
+    window.localStorage.setItem(key, height);
 
-    let anchorY = (anchor !== undefined) ?  anchor.getBoundingClientRect().y : 0;
+    let varName = (editor == "query") ?
+                  "--query-editor-height" :
+                  "--answer-editor-height";
 
-    document.documentElement.style.setProperty('--edit-text-height', `${height}em`);
-
-    if (anchor !== undefined)
-    {
-        /*
-         * Adjust the window scroll so that the clicked
-         * button stays in the same location.
-         */
-        let scrollY =  anchor.getBoundingClientRect().y - anchorY;
-        window.scrollBy(0, scrollY);
-    }
+    document.documentElement.style.setProperty(varName, `${height}em`);
 }
 
 function updateCard(returnToIndexOnUpdate)
@@ -279,12 +272,12 @@ function returnToIndex()
                                     data-mini="false"
                                     data-inline="true"
                                     tabindex="-1"
-                                    onclick="adjustTextEditorHeight(5, this)">+</button>
+                                    onclick="adjustTextEditorHeight('query', 5)">+</button>
                                 <button
                                     data-mini="false"
                                     data-inline="true"
                                     tabindex="-1"
-                                    onclick="adjustTextEditorHeight(-5, this)">-</button>
+                                    onclick="adjustTextEditorHeight('query', -5)">-</button>
                                 <button
                                     data-mini="false"
                                     data-inline="true"
@@ -335,12 +328,12 @@ function returnToIndex()
                                     data-mini="false"
                                     data-inline="true"
                                     tabindex="-1"
-                                    onclick="adjustTextEditorHeight(5, this)">+</button>
+                                    onclick="adjustTextEditorHeight('answer', 5)">+</button>
                                 <button
                                     data-mini="false"
                                     data-inline="true"
                                     tabindex="-1"
-                                    onclick="adjustTextEditorHeight(-5, this)">-</button>
+                                    onclick="adjustTextEditorHeight('answer', -5)">-</button>
                                 <button
                                     data-mini="false"
                                     data-inline="true"
