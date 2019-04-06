@@ -542,7 +542,11 @@ const CGraphMenu = (function() {
         {
             var text = command.create(points).trim();
 
-            if ((text != "") && callback) callback(text);
+            if ((text != "") && callback)
+            {
+                if (!text.endsWith(';')) text = text + ';';
+                callback(text);
+            }
 
             points = [];
         }
