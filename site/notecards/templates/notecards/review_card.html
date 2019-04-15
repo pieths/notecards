@@ -52,19 +52,15 @@
     <script src="{% static 'notecards/js.cookie.js' %}"></script>
     <script src="{% static 'notecards/card_api.js' %}"></script>
 
-    <!-- CGraph support -->
-    <script type="text/javascript" src="{% static 'notecards/cgraph/smooth-0.1.7.js' %}"></script>
-    <script type="text/javascript" src="{% static 'notecards/cgraph/cgraph.js' %}"></script>
-
     <link rel="stylesheet" type="text/css" href="{% static 'notecards/style.css' %}" />
-</head>
+
+<script type="module">
+import {CGraph} from "{% static 'notecards/cgraph/cgraph.js' %}";
+$(document).ready(function(){ initPage(CGraph); });
+</script>
 
 <script>
-$(document).ready(function(){
-    CGraph.init(DJANGO_STATIC_URL + "/cgraph/", initPage);
-});
-
-function initPage()
+function initPage(CGraph)
 {
     CardApi.init();
 
@@ -137,6 +133,8 @@ function addCopyToCodeBlocks()
     }
 }
 </script>
+
+</head>
 
 <body>
 

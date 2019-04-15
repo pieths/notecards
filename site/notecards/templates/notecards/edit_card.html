@@ -79,12 +79,6 @@
     <script src="{% static 'notecards/asciimath_keymap.js' %}"></script>
     <script src="{% static 'notecards/point_adjust_keymap.js' %}"></script>
 
-    <!-- CGraph support -->
-    <script type="text/javascript" src="{% static 'notecards/cgraph/color_palette.js' %}"></script>
-    <script type="text/javascript" src="{% static 'notecards/cgraph/smooth-0.1.7.js' %}"></script>
-    <script type="text/javascript" src="{% static 'notecards/cgraph/cgraph.js' %}"></script>
-    <script type="text/javascript" src="{% static 'notecards/cgraph/cgraph_menu.js' %}"></script>
-
     <!-- Tag bar support -->
     <script type="text/javascript" src="{% static 'notecards/tag_bar.js' %}"></script>
     <script type="text/javascript" src="{% static 'notecards/tag_overlay.js' %}"></script>
@@ -96,21 +90,24 @@
     <script src="{% static 'notecards/notification_bar.js' %}"></script>
     <link rel="stylesheet" type="text/css" href="{% static 'notecards/notification_bar.css' %}" />
 
-    <link rel="stylesheet" type="text/css" href="{% static 'notecards/cgraph/cgraph_menu.css' %}" />
+    <!-- CGraph menu -->
+    <script type="text/javascript" src="{% static 'notecards/color_palette.js' %}"></script>
+    <script type="text/javascript" src="{% static 'notecards/cgraph_menu.js' %}"></script>
+    <link rel="stylesheet" type="text/css" href="{% static 'notecards/cgraph_menu.css' %}" />
 
     <script type="text/javascript" src="{% static 'notecards/clipboard.js' %}"></script>
 
     <link rel="stylesheet" type="text/css" href="{% static 'notecards/style.css' %}" />
-</head>
+
+<script type="module">
+import {CGraph} from "{% static 'notecards/cgraph/cgraph.js' %}";
+$(window).on("load", function() { initPage(CGraph); });
+</script>
 
 <script>
 var fileAttachmentOverlay = null;
 
-$(window).on("load", function() {
-    CGraph.init(DJANGO_STATIC_URL + "/cgraph/", initPage);
-});
-
-function initPage()
+function initPage(CGraph)
 {
     var md = MarkdownUtils.init();
 
@@ -256,6 +253,7 @@ function returnToIndex()
     location.assign((url == null) ? '/cards/' : url);
 }
 </script>
+</head>
 
 <body>
 
