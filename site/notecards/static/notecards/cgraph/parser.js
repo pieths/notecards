@@ -9,7 +9,8 @@ const TYPE_TEXT = 1;
 const TYPE_COMMAND_BOUNDARY = 2;
 const TYPE_LINE_CONTINUATION = 3;
 const TYPE_SCRIPT_SHORTHAND = 4;
-const TYPE_INPUT_END = 5;
+const TYPE_GROUP_SCRIPT_SHORTHAND = 5;
+const TYPE_INPUT_END = 6;
 const TYPE_GROUP = DELIMITED_BLOCKS_START_VALUE;
 const TYPE_STRING = DELIMITED_BLOCKS_START_VALUE + 1;
 const TYPE_SCRIPT = DELIMITED_BLOCKS_START_VALUE + 2;
@@ -34,6 +35,14 @@ function List()
         else if (type == TYPE_SCRIPT_SHORTHAND)
         {
             type = TYPE_SCRIPT;
+
+            if (value.charAt(0) == '=')
+                value = "=$." + value.substring(1);
+            else value = "$." + value.substring(1);
+        }
+        else if (type == TYPE_GROUP_SCRIPT_SHORTHAND)
+        {
+            type = TYPE_GROUP_SCRIPT;
 
             if (value.charAt(0) == '=')
                 value = "=$." + value.substring(1);
@@ -199,8 +208,34 @@ function parse(input)
         else if (ch == open) delimCount++;
     };
 
+    let checkForAllDelimiters = ch =>
+    {
+        let top = delimStack[delimStack.length - 1];
+
+        if (top == '"')
+        {
+            if (ch == '"') delimStack.pop();
+        }
+        else if (top == "'")
+        {
+            if (ch == "'") delimStack.pop();
+        }
+        else if (top == "`")
+        {
+            if (ch == "`") delimStack.pop();
+        }
+        else
+        {
+            if ((ch == ')') && (top == '(')) delimStack.pop();
+            else if ((ch == ']') && (top == '[')) delimStack.pop();
+            else if ((ch == '}') && (top == '{')) delimStack.pop();
+            else if ("([{\"'`".includes(ch)) delimStack.push(ch);
+        }
+    };
+
     let peek = () => input.charAt(i + 1);
     let prev = () => input.charAt(i - 1);
+
 
     while (type != TYPE_INPUT_END)
     {
@@ -211,6 +246,9 @@ function parse(input)
         {
             if (ch == ')') newType = TYPE_UNKNOWN;
             else if (ch == '{') newType = TYPE_GROUP_SCRIPT;
+            else if (((ch == '$') || (ch == '=')) &&
+                     ((i == start) || isWhiteSpace(prev())) &&
+                     !isWhiteSpace(peek())) newType = TYPE_GROUP_SCRIPT_SHORTHAND;
         }
         else if (type == TYPE_STRING) checkForDelimiter(ch, '"', '"');
         else if (type == TYPE_SCRIPT) checkForDelimiter(ch, '{', '}');
@@ -224,30 +262,17 @@ function parse(input)
                 else if (ch == ';') newType = TYPE_COMMAND_BOUNDARY;
                 else if ("([{\"'`".includes(ch)) delimStack.push(ch);
             }
-            else
+            else checkForAllDelimiters(ch);
+        }
+        else if (type == TYPE_GROUP_SCRIPT_SHORTHAND)
+        {
+            if (delimStack.length == 0)
             {
-                let top = delimStack[delimStack.length - 1];
-
-                if (top == '"')
-                {
-                    if (ch == '"') delimStack.pop();
-                }
-                else if (top == "'")
-                {
-                    if (ch == "'") delimStack.pop();
-                }
-                else if (top == "`")
-                {
-                    if (ch == "`") delimStack.pop();
-                }
-                else
-                {
-                    if ((ch == ')') && (top == '(')) delimStack.pop();
-                    else if ((ch == ']') && (top == '[')) delimStack.pop();
-                    else if ((ch == '}') && (top == '{')) delimStack.pop();
-                    else if ("([{\"'`".includes(ch)) delimStack.push(ch);
-                }
+                if (isWhiteSpace(ch)) newType = TYPE_GROUP;
+                else if (ch == ')') newType = TYPE_UNKNOWN;
+                else if ("([{\"'`".includes(ch)) delimStack.push(ch);
             }
+            else checkForAllDelimiters(ch);
         }
         else if ((type == TYPE_UNKNOWN) ||
                  (type == TYPE_TEXT) ||
@@ -270,9 +295,10 @@ function parse(input)
 
         if (newType == TYPE_INPUT_END)
         {
-            if (type == TYPE_GROUP_SCRIPT)
+            if ((type == TYPE_GROUP_SCRIPT) ||
+                (type == TYPE_GROUP_SCRIPT_SHORTHAND))
             {
-                list.append(TYPE_GROUP_SCRIPT, input.substring(start, i));
+                list.append(type, input.substring(start, i));
                 list.append(TYPE_GROUP, '');
                 type = TYPE_GROUP;
             }
@@ -293,8 +319,21 @@ function parse(input)
                 list.append(type, input.substring(start, i));
             }
 
-            start = ((type >= DELIMITED_BLOCKS_START_VALUE) ||
-                     (newType >= DELIMITED_BLOCKS_START_VALUE)) ? i + 1 : i;
+            if (type == TYPE_GROUP_SCRIPT_SHORTHAND)
+            {
+                if (newType == TYPE_UNKNOWN)
+                {
+                    list.append(TYPE_GROUP, '');
+                    start = i + 1;
+                }
+                else if (newType == TYPE_GROUP) start = i;
+            }
+            else if (newType >= DELIMITED_BLOCKS_START_VALUE)
+            {
+                start = i + 1;
+            }
+            else start = i;
+
             type = newType;
         }
 
