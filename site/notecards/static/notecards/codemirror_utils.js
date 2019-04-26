@@ -490,8 +490,8 @@ const CodeMirrorUtils = (function() {
      * Return the public API.
      */
     return {
-        init: function(queryTextArea, answerTextArea, queryPreviewer, answerPreviewer, options) {
-            init(queryTextArea, answerTextArea, queryPreviewer, answerPreviewer, options);
+        init: function(queryTextArea, answerTextArea, queryPreviewer, answerPreviewer, scroller, options) {
+            init(queryTextArea, answerTextArea, queryPreviewer, answerPreviewer, scroller, options);
         },
         addCGraphTextToEditor: function(text) { addCGraphTextToEditor(text); },
         setSaveCallback: function(callback) { setSaveCallback(callback); },
