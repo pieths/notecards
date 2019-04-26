@@ -84,19 +84,31 @@ const CodeMirrorUtils = (function() {
         editor.focus();
     }
 
-    function init(queryTextArea, answerTextArea, queryPreviewer, answerPreviewer, options)
+    function init(queryTextArea,
+                  answerTextArea,
+                  queryPreviewer,
+                  answerPreviewer,
+                  scroller,
+                  options)
     {
         var enableVimMode = true;
         var autoUpdatePreview = true;
         var autoUpdateDelay = 1500;
+        var autoScrollOnFocus = true;
         var snapMultiple = 1;
 
         if (options)
         {
             if (options.hasOwnProperty('enableVimMode')) enableVimMode = !!(options.enableVimMode);
+
             if (options.hasOwnProperty('autoUpdateDelay'))
             {
                 autoUpdateDelay = Math.ceil(Number(options.autoUpdateDelay));
+            }
+
+            if (options.hasOwnProperty('autoScrollOnFocus'))
+            {
+                autoScrollOnFocus = Boolean(options.autoScrollOnFocus);
             }
         }
 
@@ -327,6 +339,11 @@ const CodeMirrorUtils = (function() {
 
         CodeMirror.Vim.mapCommand('<S-C-p>', 'action', 'startPointAdjustMode', {}, {context:'normal', isEdit: false});
 
+        CodeMirror.Vim.defineOption("asof", autoScrollOnFocus, 'boolean', [], function(value, cm) {
+            if (typeof value === "undefined") return autoScrollOnFocus;
+            else autoScrollOnFocus = value;
+        });
+
         var mode = {
             name: "markdown",
             tokenTypeOverrides: {
@@ -366,6 +383,8 @@ const CodeMirrorUtils = (function() {
 
         queryTextEditor.on('focus', function(editor, evt) {
             lastFocusedEditor = editor;
+
+            if (autoScrollOnFocus) scroller.scrollToTop('query');
         });
 
         answerTextEditor = CodeMirror.fromTextArea(answerTextArea, {
@@ -398,6 +417,8 @@ const CodeMirrorUtils = (function() {
 
         answerTextEditor.on('focus', function(editor, evt) {
             lastFocusedEditor = editor;
+
+            if (autoScrollOnFocus) scroller.scrollToTop('answer');
         });
 
         if (enableVimMode)

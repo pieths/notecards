@@ -157,8 +157,19 @@ function initPage(CGraph)
         queryPreviewer,
         answerPreviewer,
         {
+            scrollToTop: function(editorName)
+            {
+                let id = (editorName == "query") ?
+                         "query_section_title" :
+                         "answer_section_title";
+
+                document.getElementById(id).scrollIntoView(true);
+            }
+        },
+        {
             enableVimMode: onDesktop,
-            autoUpdateDelay: onDesktop ? 10 : 1500
+            autoUpdateDelay: onDesktop ? 10 : 1500,
+            autoScrollOnFocus: onDesktop
         });
 
     CodeMirrorUtils.setExitCallback(returnToIndex);
@@ -281,7 +292,7 @@ function returnToIndex()
 
     <!-- QUERY SECTION -->
 
-    <h4 class="ui-bar ui-bar-a">QUERY</h4>
+    <h4 id="query_section_title" class="ui-bar ui-bar-a">QUERY</h4>
     <div class="ui-body">
 
         <div id="query_section" class="ui-grid-a">
@@ -337,7 +348,7 @@ function returnToIndex()
 
     <!-- ANSWER SECTION -->
 
-    <h4 class="ui-bar ui-bar-a">ANSWER</h4>
+    <h4 id="answer_section_title" class="ui-bar ui-bar-a">ANSWER</h4>
     <div class="ui-body">
 
         <div id="answer_section" class="ui-grid-a">
