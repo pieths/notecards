@@ -157,9 +157,9 @@ function initPage(CGraph)
         queryPreviewer,
         answerPreviewer,
         {
-            scrollToTop: function(editorName)
+            scrollToTop: function(editorId)
             {
-                let id = (editorName == "query") ?
+                let id = (editorId == CodeMirrorUtils.QUERY_EDITOR_ID) ?
                          "query_section_title" :
                          "answer_section_title";
 
@@ -177,42 +177,42 @@ function initPage(CGraph)
 
     var titleTextArea = document.getElementById("title_textarea");
     if (titleTextArea.value === "") titleTextArea.focus();
-    else CodeMirrorUtils.setFocus("query", 0);
+    else CodeMirrorUtils.setFocus(CodeMirrorUtils.QUERY_EDITOR_ID, 0);
 
     var cgraphMenu = new CGraphMenu(CGraph);
     cgraphMenu.setEventListener(text => CodeMirrorUtils.addCGraphTextToEditor(text));
 
-    adjustTextEditorHeight('query', 0);
-    adjustTextEditorHeight('answer', 0);
+    adjustTextEditorHeight(CodeMirrorUtils.QUERY_EDITOR_ID, 0);
+    adjustTextEditorHeight(CodeMirrorUtils.ANSWER_EDITOR_ID, 0);
 
     let bodyElement = document.getElementsByTagName('body')[0];
     bodyElement.addEventListener('keydown', function (evt) {
         if ((evt.key == "+") && evt.ctrlKey && evt.shiftKey)
         {
-            let editor = CodeMirrorUtils.getFocusedEditorName();
-            adjustTextEditorHeight(editor, 5);
+            let editorId = CodeMirrorUtils.getFocusedEditorId();
+            adjustTextEditorHeight(editorId, 5);
             evt.preventDefault();
         }
         else if ((evt.key == "_") && evt.ctrlKey && evt.shiftKey)
         {
-            let editor = CodeMirrorUtils.getFocusedEditorName();
-            adjustTextEditorHeight(editor, -5);
+            let editorId = CodeMirrorUtils.getFocusedEditorId();
+            adjustTextEditorHeight(editorId, -5);
             evt.preventDefault();
         }
     });
 }
 
-function adjustTextEditorHeight(editor, heightIncrement)
+function adjustTextEditorHeight(editorId, heightIncrement)
 {
     let key = "";
     let varName = "";
 
-    if (editor == "query")
+    if (editorId == CodeMirrorUtils.QUERY_EDITOR_ID)
     {
         key = "query_editor_height";
         varName = "--query-editor-height";
     }
-    else if (editor == "answer")
+    else if (editorId == CodeMirrorUtils.ANSWER_EDITOR_ID)
     {
         key = "answer_editor_height";
         varName = "--answer-editor-height";
@@ -307,12 +307,12 @@ function returnToIndex()
                                     data-mini="false"
                                     data-inline="true"
                                     tabindex="-1"
-                                    onclick="adjustTextEditorHeight('query', 5)">+</button>
+                                    onclick="adjustTextEditorHeight(CodeMirrorUtils.QUERY_EDITOR_ID, 5)">+</button>
                                 <button
                                     data-mini="false"
                                     data-inline="true"
                                     tabindex="-1"
-                                    onclick="adjustTextEditorHeight('query', -5)">-</button>
+                                    onclick="adjustTextEditorHeight(CodeMirrorUtils.QUERY_EDITOR_ID, -5)">-</button>
                                 <button
                                     data-mini="false"
                                     data-inline="true"
@@ -363,12 +363,12 @@ function returnToIndex()
                                     data-mini="false"
                                     data-inline="true"
                                     tabindex="-1"
-                                    onclick="adjustTextEditorHeight('answer', 5)">+</button>
+                                    onclick="adjustTextEditorHeight(CodeMirrorUtils.ANSWER_EDITOR_ID, 5)">+</button>
                                 <button
                                     data-mini="false"
                                     data-inline="true"
                                     tabindex="-1"
-                                    onclick="adjustTextEditorHeight('answer', -5)">-</button>
+                                    onclick="adjustTextEditorHeight(CodeMirrorUtils.ANSWER_EDITOR_ID, -5)">-</button>
                                 <button
                                     data-mini="false"
                                     data-inline="true"

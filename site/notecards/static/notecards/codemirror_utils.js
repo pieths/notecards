@@ -10,6 +10,9 @@ const CodeMirrorUtils = (function() {
     var queryTextEditor = null;
     var answerTextEditor = null;
 
+    const QUERY_EDITOR_ID = 0;
+    const ANSWER_EDITOR_ID = 1;
+
     var templates =
     {
         'cgraph': '\n::: cgraph 1\ninit w 30em r -10 -10 150 100 fss 0.333; grid; axis;\n___\n:::',
@@ -384,7 +387,7 @@ const CodeMirrorUtils = (function() {
         queryTextEditor.on('focus', function(editor, evt) {
             lastFocusedEditor = editor;
 
-            if (autoScrollOnFocus) scroller.scrollToTop('query');
+            if (autoScrollOnFocus) scroller.scrollToTop(QUERY_EDITOR_ID);
         });
 
         answerTextEditor = CodeMirror.fromTextArea(answerTextArea, {
@@ -418,7 +421,7 @@ const CodeMirrorUtils = (function() {
         answerTextEditor.on('focus', function(editor, evt) {
             lastFocusedEditor = editor;
 
-            if (autoScrollOnFocus) scroller.scrollToTop('answer');
+            if (autoScrollOnFocus) scroller.scrollToTop(ANSWER_EDITOR_ID);
         });
 
         if (enableVimMode)
@@ -437,26 +440,27 @@ const CodeMirrorUtils = (function() {
 
             if (saveCallback != null)
             {
-                var editorName = "";
-                if (e == queryTextEditor) editorName = "query";
-                else if (e == answerTextEditor) editorName = "answer";
+                var editorId = -1;
 
-                saveCallback(editorName, e.getCursor().line);
+                if (e == queryTextEditor) editorId = QUERY_EDITOR_ID;
+                else if (e == answerTextEditor) editorId = ANSWER_EDITOR_ID;
+
+                saveCallback(editorId, e.getCursor().line);
             }
         };
     }
 
-    function setFocus(editorName, line)
+    function setFocus(editorId, line)
     {
         var pos = {line: line, ch: 0};
 
-        if (editorName === "query")
+        if (editorId === QUERY_EDITOR_ID)
         {
             queryTextEditor.setCursor(pos);
             queryTextEditor.scrollIntoView(pos, 100);
             queryTextEditor.focus();
         }
-        else if (editorName === "answer")
+        else if (editorId === ANSWER_EDITOR_ID)
         {
             answerTextEditor.setCursor(pos);
             answerTextEditor.scrollIntoView(pos, 100);
@@ -464,14 +468,14 @@ const CodeMirrorUtils = (function() {
         }
     }
 
-    function getFocusedEditorName()
+    function getFocusedEditorId()
     {
-        let name = "";
+        let editorId = -1;
 
-        if (queryTextEditor.hasFocus()) name = 'query';
-        else if (answerTextEditor.hasFocus()) name = 'answer';
+        if (queryTextEditor.hasFocus()) editorId = QUERY_EDITOR_ID;
+        else if (answerTextEditor.hasFocus()) editorId = ANSWER_EDITOR_ID;
 
-        return name;
+        return editorId;
     }
 
     function sync()
@@ -492,9 +496,11 @@ const CodeMirrorUtils = (function() {
         addCGraphTextToEditor: function(text) { addCGraphTextToEditor(text); },
         setSaveCallback: function(callback) { setSaveCallback(callback); },
         setExitCallback: function(callback) { setExitCallback(callback); },
-        setFocus: function(editorName, line) { setFocus(editorName, line); },
-        getFocusedEditorName: function() { return getFocusedEditorName(); },
-        sync: function() { sync(); }
+        setFocus: function(editorId, line) { setFocus(editorId, line); },
+        getFocusedEditorId: function() { return getFocusedEditorId(); },
+        sync: function() { sync(); },
+        QUERY_EDITOR_ID: QUERY_EDITOR_ID,
+        ANSWER_EDITOR_ID: ANSWER_EDITOR_ID,
     };
 })();
 
