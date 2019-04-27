@@ -840,7 +840,7 @@ function processElement(sourceElement)
         commandProcessor.reset();
         commandProcessor.processInput(sourceText, cg);
 
-        if (cache.enabled()) addToCache(sourceText, svgElement);
+        if (cache.enabled()) cache.put(sourceText, svgElement);
     }
     else
     {
@@ -947,6 +947,10 @@ export const CGraph = {
     setUrlMap: function(map)
     {
         setUrlMap(map);
+    },
+    enableCache: function(enable)
+    {
+        cache.enable(enable);
     },
     convertElement: function(element, options)
     {
