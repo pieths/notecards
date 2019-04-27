@@ -270,6 +270,8 @@ function CGInstance()
     var useUniformScaling = false;
     var showUniformScale = false;
 
+    const jsContext = jsContextFactory.newContext();
+
 
     function getId(suffix)
     {
@@ -556,6 +558,7 @@ function CGInstance()
     this.getId = getId;
     this.appendElement = appendElement;
     this.graphRange = graphRange;
+    this.jsContext = jsContext;
     this.initRootElements = initRootElements;
     this.drawAngleMarkers = drawAngleMarkers;
     this.popParentElement = popParentElement;
@@ -755,8 +758,6 @@ const commandProcessor = (function() {
 
     function processInput(input, cg)
     {
-        let jsContext = jsContextFactory.newContext();
-
         let commandInstances = [];
 
         let list = parser.parse(input);
@@ -772,14 +773,14 @@ const commandProcessor = (function() {
                 if (type == parser.TYPE_COMMAND_BOUNDARY) break;
                 else if (type == parser.TYPE_GROUP)
                 {
-                    collapseGroup(preprocessIt, jsContext);
+                    collapseGroup(preprocessIt, cg.jsContext);
                     preprocessIt.advance();
                 }
                 else if (type == parser.TYPE_SCRIPT)
                 {
                     let updateProcessIt = processIt.equals(preprocessIt);
 
-                    let scriptResult = jsContext.execute(preprocessIt.getData().value);
+                    let scriptResult = cg.jsContext.execute(preprocessIt.getData().value);
                     let tmpList = parser.parse(scriptResult);
                     tmpList.trimEnd(parser.TYPE_COMMAND_BOUNDARY);
 
@@ -796,8 +797,8 @@ const commandProcessor = (function() {
 
                 if (commandInstance.name && commandInstance.scriptInterface)
                 {
-                    jsContext.addGlobal(commandInstance.name,
-                                        commandInstance.scriptInterface);
+                    cg.jsContext.addGlobal(commandInstance.name,
+                                           commandInstance.scriptInterface);
                 }
             }
 

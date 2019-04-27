@@ -908,9 +908,7 @@ commands['func'].createInstance = function(cg, args)
             return result;
         `;
 
-        let jsContext = jsContextFactory.newContext();
-
-        let d = jsContext.execute(code);
+        let d = cg.jsContext.execute(code);
         d = d.replace("L", "M");
         attributes['d'] = d;
 
