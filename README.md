@@ -221,6 +221,11 @@ online help system (coming soon).
 
 CGraph is a scriptable declarative graphing library. The documentation
 for this will be in the online help system soon.
+See [CGraph Demo](https://pieths.github.io/cgraph) for a live
+interactive demo. Note, the syntax in the examples shown here might
+be out of date with the version running on the demo site (which usually
+runs the latest version).
+
 
 Here are a few examples:
 
