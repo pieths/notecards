@@ -221,6 +221,9 @@ online help system (coming soon).
 
 CGraph is a scriptable declarative graphing library. The documentation
 for this will be in the online help system soon.
+
+CGraph has been pulled out in to its own repository.
+It can be found [here](https://github.com/pieths/cgraph).
 See [CGraph Demo](https://pieths.github.io/cgraph) for a live
 interactive demo. Note, the syntax in the examples shown here might
 be out of date with the version running on the demo site (which usually
@@ -255,6 +258,22 @@ Here are a few examples:
     the graph in real time in the preview window.
 
     ![CGraph Neural Net Image](https://github.com/pieths/notecards/raw/master/docs/images/readme/cgraph_neural_net.png)
+
+Right clicking on a CGraph image in the preview window will pull up a
+menu which can be used with a mouse to assist with inserting commands.
+Note, this does not modify existing commands. Here is the basic workflow:
+
+1. Select a command in the menu by clicking on the corresponding button.
+
+2. Adjust styling and snap values if desired.
+
+3. Click on the CGraph image in the preview window to insert the command
+   using the mouse click points as values for the command. The resulting
+   text for the command will be inserted at the location of the cursor in
+   the editor. Note, the cursor must be inside the cgraph area in the editor
+   which was used to generate the preview image.
+
+![CGraph Menu Image](https://github.com/pieths/notecards/raw/master/docs/images/readme/cgraph_menu.png)
 
 
 ### Assigning Tags To Cards
