@@ -629,10 +629,12 @@ const commandProcessor = (function() {
     /*
      * Takes the args in source and adds them to target.
      */
-    function mergeArgs(target, source)
+    function mergeArgs(target, source, includeId)
     {
         for (var arg in source.args)
         {
+            if (!includeId && (arg == 'id')) continue;
+
             target.args[arg] = [];
             source.args[arg].forEach(value => target.args[arg].push(value));
         }
@@ -715,7 +717,7 @@ const commandProcessor = (function() {
             if ((command.name === ".") && (previousCommand !== null))
             {
                 command.args = parseArgs(previousCommand.name, command.args);
-                mergeArgs(previousCommand, command);
+                mergeArgs(previousCommand, command, true);
                 command = previousCommand;
             }
             else
@@ -725,7 +727,7 @@ const commandProcessor = (function() {
 
             // Clone the current command
             previousCommand = {name: command.name, args: {}};
-            mergeArgs(previousCommand, command);
+            mergeArgs(previousCommand, command, false);
 
             if (commands.hasOwnProperty(command.name))
             {
