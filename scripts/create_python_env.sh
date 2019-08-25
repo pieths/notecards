@@ -2,6 +2,8 @@
 # Licensed under the terms of the MIT license.
 
 if [ $# -gt 0 ]; then
+    # The first parameter is the path
+    # to the python3 bin directory
     PYTHON="$1/python3"
 else
     PYTHON=python3

@@ -6,10 +6,12 @@
 ## Command Line Installation (Debug/Linux/sqlite)
 
 Switch to the root directory of the repository and create the virtual
-python environment using the `create_python_env.sh` script.
+python environment using the `create_python_env.sh` script. The script
+can take an optional parameter that points to the bin directory which
+contains the python3 executable to use.
 
 ```console
-$ ./scripts/create_python_env.sh
+$ ./scripts/create_python_env.sh [path/to/python3/bin]
 ```
 
 Set the following environmental variables to the desired values.
