@@ -1,0 +1,3 @@
+[submodule "site/notecards/static/notecards/cgraph"]
+	path = site/notecards/static/notecards/cgraph
+	url = https://github.com/pieths/cgraph.git
