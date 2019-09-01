@@ -7,3 +7,6 @@
 [submodule "site/notecards/static/notecards/markdown/repo"]
 	path = site/notecards/static/notecards/markdown/repo
 	url = https://github.com/pieths/markdown-it.git
+[submodule "site/notecards/static/notecards/codemirror"]
+	path = site/notecards/static/notecards/codemirror
+	url = https://github.com/pieths/CodeMirror.git
