@@ -5,6 +5,14 @@
 
 ## Command Line Installation (Debug/Linux/sqlite)
 
+Get the notecards repository.
+
+```console
+$ git clone https://github.com/pieths/notecards.git
+$ git submodule init
+$ git submodule update
+```
+
 Switch to the root directory of the repository and create the virtual
 python environment using the `create_python_env.sh` script. The script
 can take an optional parameter that points to the bin directory which
@@ -118,6 +126,8 @@ Get the notecards repository and setup the virtual python environment.
 
 ```console
 $ git clone https://github.com/pieths/notecards.git ~/notecards/repo
+$ git submodule init
+$ git submodule update
 $ cd ~/notecards/repo
 $ ./scripts/create_python_env.sh ~/notecards/python/build/3.7.2/bin/
 ```
