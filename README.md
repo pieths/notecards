@@ -24,8 +24,8 @@ chunks called _cards_ and includes the following features:
 
 * __Realtime preview__ when creating content.
 
-* __Graph/Diagram support__ using cgraph a compact and scriptable
-    declarative graphing library.
+* __Graph/Diagram support__ using [cgraph](https://github.com/pieths/cgraph)
+    a compact and scriptable declarative graphing library.
 
 * A __Point Adjust__ editor mode for manipulating points in CGraph markup
     with Vi like keybindings.
