@@ -330,6 +330,23 @@
             }
         }
 
+        function insertComma(cm)
+        {
+            let cursor = cm.doc.getCursor();
+            let line = cm.doc.getLine(cursor.line);
+            let nextChar = line.charAt(cursor.ch);
+
+            if (" \t".includes(nextChar))
+            {
+                cm.doc.replaceSelection(",");
+                goCharRight(cm);
+            }
+            else
+            {
+                cm.doc.replaceSelection(", ");
+            }
+        }
+
         function insertWithLeadingSpace(cm, string)
         {
             var cursor = cm.doc.getCursor();
@@ -454,6 +471,10 @@
             else if (key === "=")
             {
                 insertEquals(cm);
+            }
+            else if (key === ",")
+            {
+                insertComma(cm);
             }
             else
             {
