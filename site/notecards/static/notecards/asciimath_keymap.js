@@ -484,7 +484,7 @@
 
         function processKey(key, cm)
         {
-            if (key == "Ctrl-[")
+            if ((key == "Ctrl-[") || (key == "Esc"))
             {
                 return exitAsciiMathMode;
             }
