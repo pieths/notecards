@@ -492,11 +492,11 @@
             {
                 return handleSpacePressed;
             }
-            else if (key == "Ctrl-Space")
+            else if (key == "Shift-Space")
             {
                 return goCharLeft;
             }
-            else if (key == "Shift-Space")
+            else if (key == "Ctrl-Space")
             {
                 return insertSpace;
             }
