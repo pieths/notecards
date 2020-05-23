@@ -34,5 +34,5 @@ echo
 echo Installing required python packages...
 echo
 
-pip3 install Django==2.1.11
+pip3 install Django==2.2.12
 

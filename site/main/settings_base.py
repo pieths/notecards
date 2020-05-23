@@ -22,7 +22,6 @@ if 'NOTECARDS_APP_ALLOWED_HOSTS' in os.environ:
 
 INSTALLED_APPS = [
     'notecards.apps.NotecardsConfig',
-    'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
