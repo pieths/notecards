@@ -21,7 +21,7 @@
         var buffer = "";
         var placeholder = "___";
         var nextPlaceHolderRegex = /___/;
-        var isLetterRegex = /[A-Za-z]/;
+        var isLetterOrNumberRegex = /[A-Za-z0-9]/;
         var auxiliaryKeyEventListener = null;
 
         var keyMap =
@@ -455,7 +455,7 @@
 
             checkRemovePlaceholder(cm);
 
-            if (isLetterRegex.test(key) || buffer.startsWith("mat"))
+            if (isLetterOrNumberRegex.test(key) || buffer.startsWith("mat"))
             {
                 buffer += key;
             }
