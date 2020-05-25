@@ -23,6 +23,8 @@
         var nextPlaceHolderRegex = /___/;
         var isLetterOrNumberRegex = /[A-Za-z0-9]/;
         var auxiliaryKeyEventListener = null;
+        var keyPressSeqId = 0;
+        var autoInsertSpaceSeqId = -1;
 
         var keyMap =
         {
@@ -223,7 +225,10 @@
                 }
                 else
                 {
-                    goCharRight(cm);
+                    if (!autoSpacePreviouslyInserted())
+                    {
+                        goCharRight(cm);
+                    }
                 }
             }
         }
@@ -328,6 +333,8 @@
 
                 cm.doc.replaceSelection(equalsString);
             }
+
+            markAutoInsertSpace();
         }
 
         function insertComma(cm)
@@ -345,6 +352,8 @@
             {
                 cm.doc.replaceSelection(", ");
             }
+
+            markAutoInsertSpace();
         }
 
         function insertWithLeadingSpace(cm, string)
@@ -359,6 +368,16 @@
             }
 
             cm.doc.replaceSelection(string);
+        }
+
+        function markAutoInsertSpace()
+        {
+            autoInsertSpaceSeqId = keyPressSeqId;
+        }
+
+        function autoSpacePreviouslyInserted()
+        {
+            return (keyPressSeqId - autoInsertSpaceSeqId) == 1;
         }
 
         function setAuxiliaryKeyEventListener(listener)
@@ -467,6 +486,7 @@
             if ("+-<>!~".includes(key))
             {
                 insertWithLeadingSpace(cm, key + " ");
+                markAutoInsertSpace();
             }
             else if (key === "=")
             {
@@ -564,6 +584,8 @@
         function processKey(key, cm)
         {
             var func = null;
+
+            keyPressSeqId++;
 
             if (keyFuncMap.hasOwnProperty(key))
             {
