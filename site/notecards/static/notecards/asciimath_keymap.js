@@ -482,131 +482,108 @@
             }
         }
 
-        function processKey(key, cm)
+
+        var keyFuncMap = {};
+        keyFuncMap["Ctrl-["] = exitAsciiMathMode;
+        keyFuncMap["Esc"] = exitAsciiMathMode;
+        keyFuncMap["Space"] = handleSpacePressed;
+        keyFuncMap["Shift-Space"] = goCharLeft;
+        keyFuncMap["Ctrl-Space"] = insertSpace;
+        keyFuncMap["Ctrl-0"] = jumpToEndAndExit;
+        keyFuncMap["Ctrl-F"] = startFuncMode;
+        keyFuncMap["Ctrl-8"] = function(cm)
         {
-            if ((key == "Ctrl-[") || (key == "Esc"))
-            {
-                return exitAsciiMathMode;
-            }
-            else if (key == "Space")
-            {
-                return handleSpacePressed;
-            }
-            else if (key == "Shift-Space")
-            {
-                return goCharLeft;
-            }
-            else if (key == "Ctrl-Space")
-            {
-                return insertSpace;
-            }
-            else if (key == "Ctrl-0")
-            {
-                return jumpToEndAndExit;
-            }
-            else if (key == "Ctrl-F")
-            {
-                return startFuncMode;
-            }
-            else if (key == "Ctrl-8")
-            {
-                return function(cm) {
-                    checkRemovePlaceholder(cm);
-                    processBuffer(cm);
-                    cm.doc.replaceSelection("*");
-                };
-            }
-            else if (key == "Shift-8")
-            {
-                return function(cm) {
-                    checkRemovePlaceholder(cm);
-                    processBuffer(cm);
+            checkRemovePlaceholder(cm);
+            processBuffer(cm);
+            cm.doc.replaceSelection("*");
+        };
+        keyFuncMap["Shift-8"] = function(cm)
+        {
+            checkRemovePlaceholder(cm);
+            processBuffer(cm);
 
-                    var prevChar = getPreviousChar(cm);
-                    if (prevChar != " ") cm.doc.replaceSelection(" ");
-                };
-            }
-            else if (key == "Ctrl-/")
-            {
-                return function(cm) {
-                    checkRemovePlaceholder(cm);
-                    processBuffer(cm);
+            var prevChar = getPreviousChar(cm);
+            if (prevChar != " ") cm.doc.replaceSelection(" ");
+        };
+        keyFuncMap["Ctrl-/"] = function(cm)
+        {
+            checkRemovePlaceholder(cm);
+            processBuffer(cm);
 
-                    replaceCommand(cm, 0,
-                        "{" + placeholder + "} / " +
-                        "{" + placeholder + "}" + placeholder);
-                };
-            }
-            else if (key == "Backspace")
+            replaceCommand(cm, 0,
+                "{" + placeholder + "} / " +
+                "{" + placeholder + "}" + placeholder);
+        };
+        keyFuncMap["Backspace"] = function(cm)
+        {
+            if (!atStart(cm))
             {
-                return function(cm) {
-                    if (!atStart(cm))
-                    {
-                        cm.execCommand('delCharBefore');
+                cm.execCommand('delCharBefore');
 
-                        if (buffer.length > 0)
-                        {
-                            buffer = buffer.slice(0, -1);
-                        }
-                    }
-                };
+                if (buffer.length > 0)
+                {
+                    buffer = buffer.slice(0, -1);
+                }
             }
-            else if (key == "Enter")
+        };
+        keyFuncMap["Enter"] = function(cm)
+        {
+            checkRemovePlaceholder(cm);
+            cm.doc.replaceSelection("\n");
+            buffer = "";
+        };
+        keyFuncMap["Tab"] = function(cm)
+        {
+            if (isCursorOnPlaceholder(cm))
             {
-                return function(cm) {
-                    checkRemovePlaceholder(cm);
-                    cm.doc.replaceSelection("\n");
-                    buffer = "";
-                };
-            }
-            else if (key == "Tab")
-            {
-                return function(cm) {
-                    if (isCursorOnPlaceholder(cm))
-                    {
-                        deleteNextChars(cm, placeholder.length);
-                        jumpToNextPlaceholder(cm);
-                    }
-                    else
-                    {
-                        if (buffer !== "")
-                        {
-                            if (!processBuffer(cm))
-                            {
-                                jumpToNextPlaceholder(cm);
-                            }
-                        }
-                        else jumpToNextPlaceholder(cm, true);
-                    }
-
-                    buffer = "";
-                };
-            }
-            else if (key == "Shift-Tab")
-            {
-                return function(cm) {
-                    jumpToPreviousPlaceholder(cm, true);
-                };
-            }
-            else if (key.startsWith("Shift-Ctrl-"))
-            {
-                return function(cm) {
-                    dispatchAuxiliaryKeyEvent(cm, key.substring(11));
-                };
-            }
-            else if (key == "Right")
-            {
-                return goCharRight;
-            }
-            else if (key == "Left")
-            {
-                return goCharLeft;
+                deleteNextChars(cm, placeholder.length);
+                jumpToNextPlaceholder(cm);
             }
             else
             {
-                return function(cm) { processStandardKey(key, cm); }
+                if (buffer !== "")
+                {
+                    if (!processBuffer(cm))
+                    {
+                        jumpToNextPlaceholder(cm);
+                    }
+                }
+                else jumpToNextPlaceholder(cm, true);
+            }
+
+            buffer = "";
+        };
+        keyFuncMap["Shift-Tab"] = function(cm)
+        {
+            jumpToPreviousPlaceholder(cm, true);
+        };
+        keyFuncMap["Right"] = goCharRight;
+        keyFuncMap["Left"] = goCharLeft;
+
+
+        function processKey(key, cm)
+        {
+            var func = null;
+
+            if (keyFuncMap.hasOwnProperty(key))
+            {
+                func = keyFuncMap[key];
+            }
+            else if (key.startsWith("Shift-Ctrl-"))
+            {
+                func = function(cm) { dispatchAuxiliaryKeyEvent(cm, key.substring(11)); }
+            }
+            else
+            {
+                func = function(cm) { processStandardKey(key, cm); }
+            }
+
+            if (func !== null)
+            {
+                return func;
             }
         }
+
 
         var commands = {};
         commands['int'] = function(cm)
